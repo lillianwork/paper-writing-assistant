@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学术论文写作指挥中心 — Academic Writing Command Center</title>
+<style>
+:root {
+  --bg: #f8f9fb;
+  --surface: #ffffff;
+  --surface2: #f1f3f6;
+  --border: #e2e5ea;
+  --text: #1a1d23;
+  --text2: #5f6570;
+  --text3: #9499a3;
+  --primary: #2563eb;
+  --primary-light: #eff4ff;
+  --primary-dark: #1d4ed8;
+  --accent: #059669;
+  --accent-light: #ecfdf5;
+  --warn: #d97706;
+  --warn-light: #fffbeb;
+  --danger: #dc2626;
+  --danger-light: #fef2f2;
+  --purple: #7c3aed;
+  --purple-light: #f5f3ff;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --mono: "SF Mono", "Fira Code", "Consolas", monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; height: 100vh; overflow: hidden; }
+#app { display: flex; height: 100vh; }
+
+/* ── Sidebar ── */
+#sidebar {
+  width: 260px; min-width: 260px; background: var(--surface);
+  border-right: 1px solid var(--border); display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.sidebar-header { padding: 20px 20px 12px; border-bottom: 1px solid var(--border); }
+.sidebar-header h1 { font-size: 16px; font-weight: 700; color: var(--primary); }
+.sidebar-header .sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.stage-list { padding: 8px 12px; flex: 1; overflow-y: auto; }
+.stage-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  border-radius: var(--radius); cursor: pointer; transition: all .15s;
+  font-size: 13px; color: var(--text2); margin-bottom: 2px; border: 1px solid transparent;
+}
+.stage-item:hover { background: var(--surface2); color: var(--text); }
+.stage-item.active { background: var(--primary-light); color: var(--primary); border-color: #d0d9f0; font-weight: 600; }
+.stage-num {
+  width: 26px; height: 26px; border-radius: 50%; background: var(--surface2);
+  display: flex; align-items: center; justify-content: center; font-size: 11px;
+  font-weight: 700; flex-shrink: 0;
+}
+.stage-item.active .stage-num { background: var(--primary); color: #fff; }
+.stage-done .stage-num { background: var(--accent); color: #fff; }
+.stage-tag { font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: auto; flex-shrink: 0; }
+.stage-tag.gate { background: var(--danger-light); color: var(--danger); }
+.stage-tag.check { background: var(--warn-light); color: var(--warn); }
+.sidebar-footer { padding: 12px 20px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text3); }
+
+/* ── Main ── */
+#main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+#topbar {
+  padding: 14px 24px; background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 16px;
+}
+#topbar h2 { font-size: 18px; font-weight: 700; flex: 1; }
+#topbar .badge { font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 600; }
+.badge-stage { background: var(--primary-light); color: var(--primary); }
+.badge-mode { background: var(--purple-light); color: var(--purple); cursor: pointer; }
+
+#content-area { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+
+/* ── Cards ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow);
+}
+.card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.card-header h3 { font-size: 15px; font-weight: 700; }
+.card-header .icon { font-size: 20px; }
+.card-desc { font-size: 13px; color: var(--text2); margin-bottom: 12px; }
+
+/* ── Prompt Builder ── */
+.prompt-builder { display: flex; flex-direction: column; gap: 12px; }
+.prompt-row { display: flex; gap: 12px; }
+.prompt-field { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.prompt-field label { font-size: 12px; font-weight: 600; color: var(--text2); }
+.prompt-field input, .prompt-field textarea, .prompt-field select {
+  padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius);
+  font-size: 13px; font-family: var(--font); resize: vertical;
+}
+.prompt-field textarea { min-height: 60px; }
+.prompt-field input:focus, .prompt-field textarea:focus, .prompt-field select:focus {
+  outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+}
+.btn {
+  padding: 10px 20px; border: none; border-radius: var(--radius); font-size: 13px;
+  font-weight: 600; cursor: pointer; transition: all .15s; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-secondary { background: var(--surface2); color: var(--text); }
+.btn-secondary:hover { background: var(--border); }
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-warn { background: var(--warn); color: #fff; }
+.btn-sm { padding: 6px 12px; font-size: 11px; }
+.btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ── Result Box ── */
+.result-box {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px; font-size: 13px; max-height: 300px; overflow-y: auto;
+  white-space: pre-wrap; font-family: var(--font); line-height: 1.7;
+}
+.result-box.empty { color: var(--text3); text-align: center; padding: 40px; }
+.copy-btn { float: right; font-size: 11px; cursor: pointer; color: var(--primary); background: none; border: none; }
+
+/* ── Tool Grid ── */
+.tool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.tool-card {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px; transition: all .15s; cursor: pointer;
+}
+.tool-card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); }
+.tool-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.tool-card .url { font-size: 11px; color: var(--primary); }
+.tool-card p { font-size: 12px; color: var(--text2); margin-top: 4px; }
+
+/* ── Quality Gates ── */
+.gate-list { display: flex; flex-direction: column; gap: 8px; }
+.gate-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+  border-radius: var(--radius); background: var(--surface2); font-size: 13px;
+}
+.gate-item.warn { background: var(--warn-light); border: 1px solid #fcd34d; }
+.gate-item.danger { background: var(--danger-light); border: 1px solid #fecaca; }
+.gate-item.pass { background: var(--accent-light); border: 1px solid #a7f3d0; }
+.gate-icon { font-size: 16px; flex-shrink: 0; }
+
+/* ── Role Panel ── */
+.role-tabs { display: flex; gap: 4px; background: var(--surface2); padding: 4px; border-radius: var(--radius); }
+.role-tab {
+  flex: 1; text-align: center; padding: 8px 12px; border-radius: 6px; cursor: pointer;
+  font-size: 12px; font-weight: 600; transition: all .15s; border: none; background: transparent;
+}
+.role-tab.active { background: var(--surface); box-shadow: var(--shadow); }
+
+/* ── Checklist ── */
+.checklist { display: flex; flex-direction: column; gap: 6px; }
+.checklist-item { display: flex; align-items: center; gap: 10px; font-size: 13px; padding: 6px 0; }
+.checklist-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+
+/* ── Progress Bar ── */
+.progress-bar {
+  height: 4px; background: var(--surface2); border-radius: 2px; margin-top: 8px; overflow: hidden;
+}
+.progress-fill { height: 100%; background: var(--primary); border-radius: 2px; transition: width .3s; }
+
+/* ── Tabs ── */
+.tab-bar { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 16px; }
+.tab-btn {
+  padding: 8px 16px; border: none; background: none; cursor: pointer;
+  font-size: 13px; color: var(--text2); font-weight: 500; transition: all .15s;
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+}
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
+
+/* ── Toast ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; padding: 12px 20px;
+  border-radius: var(--radius); font-size: 13px; font-weight: 600; z-index: 1000;
+  animation: slideUp .3s ease; background: var(--text); color: #fff;
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  #sidebar { display: none; }
+  #main { min-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <h1>论文写作指挥中心</h1>
+      <div class="sub">Academic Writing Command Center</div>
+    </div>
+    <div class="stage-list" id="stageList"></div>
+    <div class="sidebar-footer">
+      进度: <span id="progressPct">0%</span>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+  </nav>
+
+  <!-- ═══════════ MAIN ═══════════ -->
+  <div id="main">
+    <div id="topbar">
+      <h2 id="stageTitle">准备开始</h2>
+      <span class="badge badge-stage" id="stageBadge">全流程 10 阶段</span>
+      <span class="badge badge-mode" id="modeBadge" onclick="cycleMode()" title="切换角色模式">👤 作者模式</span>
+    </div>
+    <div id="content-area"></div>
+  </div>
+</div>
+
+<div id="toastContainer"></div>
+
+<script>
+// ═══════════════ DATA ═══════════════
+
+const stages = [
+  { id: 0,  name: '研究选题',       en: 'Topic Selection',      icon: '🎯', tag:'',  color: '#2563eb' },
+  { id: 1,  name: '文献检索与分析',  en: 'Literature Review',    icon: '📚', tag:'',  color: '#7c3aed' },
+  { id: 2,  name: '大纲与框架',      en: 'Outline & Structure',  icon: '📋', tag:'',  color: '#059669' },
+  { id: 3,  name: '引言与背景',      en: 'Introduction',         icon: '✍️', tag:'',  color: '#d97706' },
+  { id: 4,  name: '方法与数据',      en: 'Methods & Data',       icon: '🔬', tag:'',  color: '#0891b2' },
+  { id: 5,  name: '结果与图表',      en: 'Results & Figures',    icon: '📊', tag:'',  color: '#4f46e5' },
+  { id: 6,  name: '讨论与结论',      en: 'Discussion & Conclusion', icon: '💡',tag:'',  color: '#be185d' },
+  { id: 7,  name: '摘要与标题',      en: 'Abstract & Title',     icon: '📝', tag:'',  color: '#b45309' },
+  { id: 8,  name: '润色与降重',      en: 'Polish & De-plagiarize',icon: '✨', tag:'',  color: '#15803d' },
+  { id: 9,  name: '终稿与投稿',      en: 'Finalize & Submit',    icon: '🚀', tag:'check',color: '#dc2626' }
+];
+
+const toolsByStage = {
+  0: [
+    { name:'Elicit', url:'elicit.com', desc:'AI文献发现，快速定位高质量论文' },
+    { name:'Consensus', url:'consensus.app', desc:'基于语义搜索的学术共识分析' },
+    { name:'CNKI AI助手', url:'ai.cnki.net', desc:'中文文献智能检索与选题分析' },
+    { name:'Undermind', url:'undermind.ai', desc:'深度AI辅助研究问题构建' },
+    { name:'秘塔AI搜索', url:'metaso.cn', desc:'中文AI搜索，学术来源优先' }
+  ],
+  1: [
+    { name:'Zotero + GPT插件', url:'zotero.org', desc:'文献管理+AI摘要提取' },
+    { name:'Semantic Scholar', url:'semanticscholar.org', desc:'引用图谱与文献溯源' },
+    { name:'ChatPDF / Humata', url:'humata.ai', desc:'PDF对话式阅读与多模态分析' },
+    { name:'Research Rabbit', url:'researchrabbit.ai', desc:'文献网络可视化与关联发现' },
+    { name:'Connected Papers', url:'connectedpapers.com', desc:'构建文献关联图谱' },
+    { name:'星火科研助手', url:'research.xfyun.cn', desc:'中文学术文献智能分析' },
+    { name:'Aminer', url:'aminer.cn', desc:'科研趋势分析与学者画像' }
+  ],
+  2: [
+    { name:'Claude (200K上下文)', url:'claude.ai', desc:'长文本大纲构建与逻辑推演' },
+    { name:'ChatGPT o1/pro', url:'chatgpt.com', desc:'复杂推理与结构化大纲' },
+    { name:'Whimsical', url:'whimsical.com', desc:'思维导图与框架可视化' }
+  ],
+  3: [
+    { name:'Claude Sonnet/Opus', url:'claude.ai', desc:'学术语言组织，衔接自然' },
+    { name:'DeepL Write', url:'deepl.com/write', desc:'英文引言润色优化' }
+  ],
+  4: [
+    { name:'ChatGPT Code Interpreter', url:'chatgpt.com', desc:'数据分析与代码执行' },
+    { name:'Python/R + AI', url:'', desc:'统计分析与可复现脚本生成' },
+    { name:'Experiment Agent (ARS)', url:'github.com/Imbad0202/academic-research-skills', desc:'11种统计谬误检测' }
+  ],
+  5: [
+    { name:'Claude (图表生成)', url:'claude.ai', desc:'SVG/PNG学术图表生成' },
+    { name:'Napkin AI', url:'napkin.ai', desc:'文字自动转信息图' },
+    { name:'Matplotlib/ggplot + AI', url:'', desc:'代码生成专业数据可视化' }
+  ],
+  6: [
+    { name:'Claude Opus', url:'claude.ai', desc:'深度推理与批判性讨论' },
+    { name:'Consensus', url:'consensus.app', desc:'对比学术共识，增强论证' },
+    { name:'Devil\'s Advocate (ARS)', url:'github.com/Imbad0202/academic-research-skills', desc:'反谄媚协议，强制挑刺' }
+  ],
+  7: [
+    { name:'Paperpal', url:'paperpal.com', desc:'学术摘要专业润色' },
+    { name:'Quillbot', url:'quillbot.com', desc:'多版本改写，语义保持' }
+  ],
+  8: [
+    { name:'Grammarly Premium', url:'grammarly.com', desc:'语法纠错>95%准确率' },
+    { name:'DeepL Write', url:'deepl.com/write', desc:'学术风格改写与润色' },
+    { name:'GPTZero', url:'gptzero.me', desc:'AI生成内容检测' },
+    { name:'Wordtune', url:'wordtune.com', desc:'语调与风格调整' }
+  ],
+  9: [
+    { name:'LaTeX + Overleaf', url:'overleaf.com', desc:'专业排版，APA/IEEE/Chicago' },
+    { name:'知网格式精灵', url:'format.cnki.net', desc:'中文学位论文格式检查' },
+    { name:'刊寻', url:'kanxun.cn', desc:'期刊匹配与投稿建议' },
+    { name:'Academic Paper Reviewer (ARS)', url:'github.com/Imbad0202/academic-research-skills', desc:'7 Agent模拟同行评审' }
+  ]
+};
+
+const promptTemplates = {
+  0: [
+    { label:'选题发散', template:'你是[领域]资深教授。基于研究方向：「[方向]」，生成10个可行论文题目。每个题目附：研究问题(1句)、可能数据来源、可行性(1-5)、创新点说明。' },
+    { label:'研究空白定位', template:'你是[领域]研究者。分析以下3-5篇核心文献的摘要，识别未被充分研究的方向。输出：(1)共同假设 (2)方法局限 (3)3个潜在研究空白，按创新性和可行性排序。' },
+    { label:'BRTR选题框架', template:'Background: 我研究[领域]，已有[某理论/方法]的研究主要关注[X方面]。\nRole: 你是我的博士导师，擅长识别有发表潜力的研究方向。\nTask: 提出5个具体研究问题。\nRequest: 每个问题需包含：理论贡献点、实证策略建议、目标期刊定位。' }
+  ],
+  1: [
+    { label:'文献地图', template:'生成[研究领域]近5年核心文献的跨学科关联图谱。突出[学派A]、[学派B]的争议焦点，采用"问题-论据-反论"结构呈现。' },
+    { label:'文献综述段落', template:'我将提供6篇核心文献的标题和摘要。请把它们的研究问题、方法、关键发现及彼此关系(同意/争议/互补)写成2个自然段综述。要求：学术性强，语言自然，避免"首先/其次/然后"。' },
+    { label:'争议焦点提炼', template:'分析[研究主题]相关文献，识别支持派与反对派的核心论据，按[维度1]、[维度2]、[维度3]三个维度分表展示。' }
+  ],
+  2: [
+    { label:'详细大纲', template:'你是论文写作教练。根据题目「[论文题目]」，生成详细大纲：\n- 8个章节(含子章节)\n- 每个子章节2-3句要点(该段任务+要包含的证据)\n- 每章预估字数(总计[7000-10000]字)\n- 推荐结构：IMRaD / 主题式 / 理论分析' },
+    { label:'苏格拉底式规划', template:'你是我的论文导师。不要直接给我大纲。请通过提问引导我逐步理清：(1)核心研究问题 (2)理论框架选择 (3)方法设计 (4)预期贡献。每次只问一个问题，等我回答后再继续。' }
+  ],
+  3: [
+    { label:'引言背景段', template:'请写一段180字引言背景。主题：[研究主题]。要求：\n- 语言学术但通顺\n- 提出2条明确研究空白(各1句)\n- 避免"首先/其次/然后"\n- 输出纯文本，不需要参考文献标注' },
+    { label:'漏斗式引言', template:'用漏斗结构撰写引言(500-700字)：\n1. 大背景(2-3句，宏观重要性)\n2. 已有研究进展(3-4句，关键文献支撑)\n3. 尚未解决的问题(2-3句，研究空白)\n4. 本文的研究问题与方法(2句)\n5. 贡献声明(2-3句)' }
+  ],
+  4: [
+    { label:'方法章节', template:'请根据以下信息撰写方法章节(400-600字)：\n- 数据来源：[来源描述]\n- 样本量：[N]，时间：[时间段]\n- 主要变量：[变量1]([测量方式])，[变量2]([测量方式])\n- 统计方法：[方法列表]\n要求：变量定义清晰，缺失值处理说明，模型设定完整。语气学术，条理清晰。' },
+    { label:'可复现性检查', template:'检查以下方法描述是否满足：(1)他人能否仅凭描述复现研究？(2)所有参数选择是否有明确理由？(3)是否有未说明的假设？逐条分析与改进建议。' }
+  ],
+  5: [
+    { label:'图表描述', template:'为[图X]撰写60-100字图注。图名：[图名]。数据说明：[样本量、变量]。统计说明：[检验方法]。要求：包含线条/柱子含义、显著性标注(*/**/***)的解释。' },
+    { label:'结果客观呈现', template:'基于以下统计输出，撰写结果部分(300-400字)：[统计表格]。要求：(1)只陈述发现，不做解释 (2)报告效应量与置信区间 (3)使用APA格式。不要在这一节中进行讨论或解读。' }
+  ],
+  6: [
+    { label:'讨论结构化', template:'撰写讨论章节，分4个部分：\n1. 核心发现总结(2-3句)\n2. 与已有文献的对话(3-4个关键对比点)\n3. 可能的机制解释(2-3个)\n4. 局限性与未来方向(3-4点)\n在每部分中，同时用"作者视角"和"审稿人视角"审视论证。' },
+    { label:'魔鬼代言人挑战', template:'以最严厉的审稿人身份，列出本文讨论部分可能存在的5个逻辑漏洞或过度解读，每个给1-5分严重程度评分。只有评分≥4的问题才需要修改。' },
+    { label:'结论1+2+3模型', template:'将结论总结为：\n"1"：一个可嵌入教科书的经典定义(来自本研究的核心洞见)\n"2"：两项可落地的技术或方法方案\n"3"：三条具体的政策或实践建议' }
+  ],
+  7: [
+    { label:'结构化摘要', template:'撰写250字结构化摘要：\n- 背景(1-2句)：研究领域与重要性\n- 目的(1句)：研究问题/假设\n- 方法(2-3句)：设计、样本、分析策略\n- 结果(2-3句)：核心发现+效应量\n- 结论(1-2句)：主要启示\n- 关键词：5-7个' },
+    { label:'标题优化', template:'基于以下摘要，生成5个备选标题(每个≤20字)，要求：(1)包含核心变量 (2)体现创新性 (3)适合目标期刊风格。标注每个标题适合的期刊类型。' }
+  ],
+  8: [
+    { label:'学术润色', template:'下面是一段论文稿，请润色成学术期刊风格：\n- 保留原意\n- 语句简练，学术但不呆板\n- 避免"首先/其次/然后"\n- 不改变统计结论\n- 检查所有断言是否过度(如有，添加限定词)' },
+    { label:'多版本降重', template:'请将下面段落用中文改写3个版本。每个版本：(1)语义一致 (2)句式不同 (3)标注改写策略(同义词替换/句序调整/补充说明/主动被动转换)' },
+    { label:'反AI检测优化', template:'分析以下段落，从5个维度评分(0-10)：\n1. Burstiness(句式变化) 2. 套话密度 3. 词汇多样性 4. 结构模板化 5. 标点模式\n针对低分维度提供具体改写建议。' }
+  ],
+  9: [
+    { label:'AI使用声明', template:'根据[学校/期刊]的AI使用政策，生成一段AI辅助写作声明。描述：(1)使用了哪些AI工具 (2)分别用于哪些环节 (3)如何确保学术诚信 (4)人工审核的环节。' },
+    { label:'投稿信(cover letter)', template:'撰写一封投稿信：\n- 论文标题与创新性(2句)\n- 与目标期刊的匹配性(2-3句)\n- 主要发现(1-2句)\n- 声明(无一稿多投、作者同意等)\n语气专业克制，200字以内。' }
+  ]
+};
+
+const qualityGates = [
+  { id:'citation_hallucination', name:'引用幻觉检测', desc:'所有引用是否经Semantic Scholar/数据库验证？', level:'danger' },
+  { id:'data_fabrication', name:'数据捏造防范', desc:'所有数据是否来源可追溯？实验/调查数据是否有原始记录？', level:'danger' },
+  { id:'methodology_fraud', name:'方法论造假', desc:'方法是否真实执行而非AI虚构？代码/问卷/访谈是否如实记录？', level:'danger' },
+  { id:'implementation_error', name:'实施错误检查', desc:'统计方法是否正确应用？数据变换、缺失值处理是否合理？', level:'warn' },
+  { id:'hallucinated_results', name:'幻觉结果', desc:'统计结果、P值、效应量是否与原始输出一致？', level:'danger' },
+  { id:'shortcut_features', name:'取巧特征依赖', desc:'是否依赖了不应使用的简化特征或代理变量？', level:'warn' },
+  { id:'framework_lock', name:'框架锁定', desc:'AI是否过度引导你使用了某种主流但未必合适的理论框架？', level:'warn' }
+];
+
+let currentStage = 0;
+let currentMode = 'author'; // author | reviewer | devil
+let currentTab = 'prompt';
+let completedStages = new Set();
+let stageContent = {};
+
+// ═══════════════ INIT ═══════════════
+
+function init() {
+  renderSidebar();
+  selectStage(0);
+}
+
+function renderSidebar() {
+  const list = document.getElementById('stageList');
+  list.innerHTML = stages.map((s, i) => `
+    <div class="stage-item ${i === currentStage ? 'active' : ''} ${completedStages.has(i) ? 'stage-done' : ''}"
+         onclick="selectStage(${i})">
+      <span class="stage-num">${completedStages.has(i) ? '✓' : (i+1)}</span>
+      <span>${s.name}</span>
+      ${s.tag === 'gate' ? '<span class="stage-tag gate">闸门</span>' : ''}
+      ${s.tag === 'check' ? '<span class="stage-tag check">检查</span>' : ''}
+    </div>
+  `).join('');
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = Math.round((completedStages.size / stages.length) * 100);
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function selectStage(idx) {
+  currentStage = idx;
+  const s = stages[idx];
+  document.getElementById('stageTitle').textContent = `${s.icon} ${s.name}（${s.en}）`;
+  document.getElementById('stageBadge').textContent = `阶段 ${idx+1}/${stages.length}`;
+  renderSidebar();
+  renderContent();
+}
+
+// ═══════════════ CONTENT RENDER ═══════════════
+
+function renderContent() {
+  const area = document.getElementById('content-area');
+  const s = stages[currentStage];
+
+  area.innerHTML = `
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <button class="tab-btn ${currentTab === 'prompt' ? 'active' : ''}" onclick="switchTab('prompt')">📝 提示词模板</button>
+      <button class="tab-btn ${currentTab === 'tools' ? 'active' : ''}" onclick="switchTab('tools')">🧰 推荐工具</button>
+      <button class="tab-btn ${currentTab === 'checklist' ? 'active' : ''}" onclick="switchTab('checklist')">✅ 阶段清单</button>
+      <button class="tab-btn ${currentTab === 'role' ? 'active' : ''}" onclick="switchTab('role')">🎭 角色模拟</button>
+    </div>
+    <div id="tabContent"></div>
+  `;
+
+  renderTabContent();
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const btns = document.querySelectorAll('.tab-btn');
+  const labels = { prompt: 0, tools: 1, checklist: 2, role: 3 };
+  btns[labels[tab]].classList.add('active');
+  renderTabContent();
+}
+
+function renderTabContent() {
+  const container = document.getElementById('tabContent');
+  if (!container) return;
+
+  if (currentTab === 'prompt') renderPromptTab(container);
+  else if (currentTab === 'tools') renderToolsTab(container);
+  else if (currentTab === 'checklist') renderChecklistTab(container);
+  else if (currentTab === 'role') renderRoleTab(container);
+}
+
+function renderPromptTab(container) {
+  const templates = promptTemplates[currentStage] || [];
+  const stageContentKey = `stage_${currentStage}`;
+  const saved = stageContent[stageContentKey] || '';
+
+  container.innerHTML = `
+    <div class="card">
+      <div class="card-header"><span class="icon">📝</span><h3>BRTR 提示词构建器</h3></div>
+      <div class="card-desc">BRTR = Background(背景) + Role(角色) + Task(任务) + Request(要求)。填写后自动生成完整提示词。</div>
+      <div class="prompt-builder">
+        <div class="prompt-row">
+          <div class="prompt-field">
+            <label>Background — 研究背景</label>
+            <textarea id="brtrBg" placeholder="我的研究领域是...已有研究主要关注...但尚未解决..."></textarea>
+          </div>
+          <div class="prompt-field">
+            <label>Role — AI角色</label>
+            <select id="brtrRole">
+              <option value="资深教授/博导">资深教授/博导</option>
+              <option value="期刊审稿人">期刊审稿人</option>
+              <option value="方法论专家">方法论专家</option>
+              <option value="学术写作教练">学术写作教练</option>
+              <option value="该领域前沿研究者">该领域前沿研究者</option>
+              <option value="统计顾问">统计顾问</option>
+            </select>
+          </div>
+        </div>
+        <div class="prompt-row">
+          <div class="prompt-field">
+            <label>Task — 具体任务</label>
+            <input id="brtrTask" placeholder="例如：生成10个论文题目、分析文献争议、润色引言段落">
+          </div>
+          <div class="prompt-field">
+            <label>Request — 输出要求</label>
+            <input id="brtrReq" placeholder="例如：含可行性评分、避免"首先/其次"、输出300字以内">
+          </div>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="buildBRTR()">🔨 生成提示词</button>
+          <button class="btn btn-secondary" onclick="useTemplate()">📋 使用精选模板</button>
+          <button class="btn btn-accent btn-sm" onclick="copyPrompt()" id="copyBtn" style="display:none;">📋 复制</button>
+        </div>
+        <div class="result-box empty" id="promptResult">点击"生成提示词"或"使用精选模板"来构建提示词</div>
+      </div>
+    </div>
+
+    <!-- Template Library -->
+    <div class="card">
+      <div class="card-header"><span class="icon">📚</span><h3>精选模板库 — ${stages[currentStage].name}</h3></div>
+      <div class="tool-grid">
+        ${(templates).map((t, i) => `
+          <div class="tool-card" onclick="loadTemplate(${i})">
+            <h4>${t.label}</h4>
+            <p>${t.template.substring(0, 60)}...</p>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- Stage Content Editor -->
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">✍️</span>
+        <h3>阶段写作区</h3>
+        <button class="btn btn-sm btn-secondary" onclick="saveStageContent()">💾 暂存</button>
+      </div>
+      <textarea id="stageEditor" style="width:100%;min-height:150px;padding:12px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-family:var(--font);resize:vertical;" placeholder="在此撰写或粘贴本阶段的内容草稿...">${saved}</textarea>
+    </div>
+  `;
+
+  // Restore BRTR fields if saved
+  const brtr = JSON.parse(localStorage.getItem('brtr_' + currentStage) || '{}');
+  if (brtr.bg) document.getElementById('brtrBg').value = brtr.bg;
+  if (brtr.role) document.getElementById('brtrRole').value = brtr.role;
+  if (brtr.task) document.getElementById('brtrTask').value = brtr.task;
+  if (brtr.req) document.getElementById('brtrReq').value = brtr.req;
+}
+
+function renderToolsTab(container) {
+  const tools = toolsByStage[currentStage] || [];
+  container.innerHTML = `
+    <div class="card">
+      <div class="card-header"><span class="icon">🧰</span><h3>${stages[currentStage].name} — 推荐工具</h3></div>
+      <div class="tool-grid">
+        ${tools.map(t => `
+          <div class="tool-card" onclick="window.open('https://${t.url}', '_blank')">
+            <h4>${t.name}</h4>
+            <div class="url">${t.url}</div>
+            <p>${t.desc}</p>
+          </div>
+        `).join('')}
+      </div>
+      ${tools.length === 0 ? '<p style="color:var(--text3);text-align:center;padding:20px;">本阶段暂无特定工具推荐，请使用上方提示词模板。</p>' : ''}
+    </div>
+
+    <!-- ARS Integration Info -->
+    <div class="card" style="background:var(--purple-light);border-color:#c4b5fd;">
+      <div class="card-header"><span class="icon">🤖</span><h3>ARS 学术技能包集成</h3></div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:12px;">
+        Academic Research Skills (ARS) 是 GitHub 22,000+ Stars 的开源学术研究流水线，包含 32+ Agent 覆盖全流程。
+        在 Claude Code 中一键安装：
+      </p>
+      <div style="background:#1e1e2e;color:#cdd6f4;padding:12px 16px;border-radius:var(--radius);font-family:var(--mono);font-size:12px;">
+        /plugin marketplace add Imbad0202/academic-research-skills<br>
+        /plugin install academic-research-skills<br>
+        /ars-plan &nbsp;&nbsp;<span style="color:#6c7086;"># 启动10阶段全流程</span>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:var(--text2);">
+        四大核心 Skill：Deep Research (13 Agent) → Academic Paper (12 Agent) → Paper Reviewer (7 Agent) → Pipeline (10 阶段编排)<br>
+        成本：一篇 15,000 字论文约 $4-6 美元
+      </div>
+    </div>
+  `;
+}
+
+function renderChecklistTab(container) {
+  const s = stages[currentStage];
+  const savedChecks = JSON.parse(localStorage.getItem('checks_' + currentStage) || '{}');
+
+  const stageChecks = {
+    0: ['明确了研究方向和核心问题', '进行了初步文献检索确认研究空白', '选题具有可操作的数据来源', '与导师/同行讨论过选题可行性'],
+    1: ['完成了系统检索(多数据库)', '建立了文献管理库(Zotero/EndNote)', '完成了文献分类与核心文献标注', '撰写了文献综述草稿'],
+    2: ['确定了论文结构(IMRaD/主题式等)', '每个章节有明确的写作目标', '预估了各章字数分配', '大纲经导师确认'],
+    3: ['研究背景清晰', '研究空白明确(2-3个)', '研究问题/假设陈述清晰', '贡献声明具体'],
+    4: ['数据来源描述可复现', '变量定义与测量方式完整', '统计方法选择有理论依据', '缺失值处理方案明确'],
+    5: ['结果呈现客观(无解读)', '效应量与置信区间完整', '图表清晰并有完整图注', '显著性标注规范'],
+    6: ['讨论与文献充分对话', '机制解释合理', '局限性诚实且具体', '结论与引言呼应'],
+    7: ['摘要包含所有核心要素', '标题精准反映内容', '关键词覆盖核心概念'],
+    8: ['语言润色完成(学术风格)', '查重率达标', '引用格式统一', 'AI使用已标注'],
+    9: ['格式符合目标期刊要求', '所有作者确认终稿', '投稿信撰写', '补充材料齐全']
+  };
+
+  const checks = stageChecks[currentStage] || [];
+
+  container.innerHTML = `
+    <div class="card">
+      <div class="card-header"><span class="icon">✅</span><h3>${s.name} — 阶段检查清单</h3></div>
+      <div class="checklist">
+        ${checks.map((c, i) => `
+          <label class="checklist-item">
+            <input type="checkbox" ${savedChecks['c'+i] ? 'checked' : ''} onchange="toggleCheck(${currentStage}, 'c${i}', this.checked)">
+            <span>${c}</span>
+          </label>
+        `).join('')}
+      </div>
+      <div style="margin-top:16px;display:flex;gap:8px;">
+        <button class="btn btn-accent btn-sm" onclick="markStageDone()">✅ 标记阶段完成</button>
+        <span style="font-size:12px;color:var(--text3);align-self:center;">
+          ${completedStages.has(currentStage) ? '✅ 已完成' : '⏳ 进行中'}
+        </span>
+      </div>
+    </div>
+
+    <!-- Quality Gates for stage 2.5 and 4.5 -->
+    ${(currentStage === 2 || currentStage === 4) ? `
+    <div class="card" style="border:2px solid ${currentStage === 2 ? '#dc2626' : '#d97706'};">
+      <div class="card-header">
+        <span class="icon">🔒</span>
+        <h3>诚信闸门 Stage ${currentStage}.5 — 不可跳过</h3>
+        <span class="badge" style="background:${currentStage === 2 ? 'var(--danger-light)' : 'var(--warn-light)'};color:${currentStage === 2 ? 'var(--danger)' : 'var(--warn)'};">强制检查</span>
+      </div>
+      <div class="card-desc">基于 Nature (2026) 发表的 7 类 AI 失败模式清单。实测在审稿前抓出 15 个伪造引用 + 3 个统计错误。</div>
+      <div class="gate-list">
+        ${qualityGates.map(g => `
+          <div class="gate-item ${g.level === 'danger' ? 'danger' : 'warn'}">
+            <span class="gate-icon">${g.level === 'danger' ? '🔴' : '🟡'}</span>
+            <div>
+              <strong>${g.name}</strong>
+              <div style="font-size:11px;color:var(--text2);">${g.desc}</div>
+            </div>
+            <input type="checkbox" style="margin-left:auto;width:18px;height:18px;accent-color:var(--accent);">
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    ` : ''}
+  `;
+}
+
+function renderRoleTab(container) {
+  container.innerHTML = `
+    <div class="card">
+      <div class="card-header"><span class="icon">🎭</span><h3>多角色模拟审阅</h3></div>
+      <div class="card-desc">模拟学术界的多重视角审视你的写作。在你的草稿基础上，从不同角色获取反馈。</div>
+
+      <div class="role-tabs" style="margin-bottom:16px;">
+        <button class="role-tab ${currentMode === 'author' ? 'active' : ''}" onclick="setMode('author')">✍️ 作者</button>
+        <button class="role-tab ${currentMode === 'reviewer' ? 'active' : ''}" onclick="setMode('reviewer')">🔍 审稿人</button>
+        <button class="role-tab ${currentMode === 'devil' ? 'active' : ''}" onclick="setMode('devil')">😈 魔鬼代言人</button>
+      </div>
+
+      <div class="prompt-field" style="margin-bottom:12px;">
+        <label>粘贴待审阅文本</label>
+        <textarea id="roleInput" style="min-height:120px;" placeholder="在此粘贴需要审阅的段落或章节..."></textarea>
+      </div>
+
+      <div class="btn-group" style="margin-bottom:16px;">
+        <button class="btn btn-primary" onclick="runRoleReview()">🎭 执行角色审阅</button>
+        <button class="btn btn-warn btn-sm" onclick="runDevilAdvocate()">😈 魔鬼代言人挑战</button>
+      </div>
+
+      <div class="result-box empty" id="roleResult">选择角色并粘贴文本后，点击执行审阅</div>
+    </div>
+
+    <!-- Anti-Flattery Protocol Info -->
+    <div class="card">
+      <div class="card-header"><span class="icon">🛡️</span><h3>反谄媚协议 (Anti-Flattery Protocol)</h3></div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.8;">
+        <p>AI 倾向于"好合作"而轻易认错。魔鬼代言人角色的反驳评分使用 <strong>1-5 量表</strong>，仅 ≥4 分才允许让步。</p>
+        <p style="margin-top:8px;"><strong>三层数据隔离：</strong></p>
+        <ul style="padding-left:20px;">
+          <li>Layer 1: 原始输入（默认不可信）</li>
+          <li>Layer 2: 验证后的产物</li>
+          <li>Layer 3: 评分标准/金标数据 — <strong>写作 AI 永远看不到</strong></li>
+        </ul>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════ ACTIONS ═══════════════
+
+function buildBRTR() {
+  const bg = document.getElementById('brtrBg')?.value || '';
+  const role = document.getElementById('brtrRole')?.value || '';
+  const task = document.getElementById('brtrTask')?.value || '';
+  const req = document.getElementById('brtrReq')?.value || '';
+
+  // Save to localStorage
+  localStorage.setItem('brtr_' + currentStage, JSON.stringify({ bg, role, task, req }));
+
+  const prompt = `Background: ${bg}
+
+Role: 你是${role}，在相关领域有丰富经验。
+
+Task: ${task}
+
+Request: ${req}
+
+请开始执行。`;
+
+  const resultBox = document.getElementById('promptResult');
+  if (resultBox) {
+    resultBox.className = 'result-box';
+    resultBox.textContent = prompt;
+  }
+  const copyBtn = document.getElementById('copyBtn');
+  if (copyBtn) copyBtn.style.display = 'inline-flex';
+}
+
+function useTemplate() {
+  const templates = promptTemplates[currentStage] || [];
+  if (templates.length === 0) return;
+  // Pick the first template
+  loadTemplate(0);
+}
+
+function loadTemplate(idx) {
+  const templates = promptTemplates[currentStage] || [];
+  if (idx >= templates.length) return;
+  const t = templates[idx];
+  const resultBox = document.getElementById('promptResult');
+  if (resultBox) {
+    resultBox.className = 'result-box';
+    resultBox.textContent = t.template;
+  }
+  const copyBtn = document.getElementById('copyBtn');
+  if (copyBtn) copyBtn.style.display = 'inline-flex';
+}
+
+function copyPrompt() {
+  const resultBox = document.getElementById('promptResult');
+  if (!resultBox || resultBox.classList.contains('empty')) return;
+  navigator.clipboard.writeText(resultBox.textContent).then(() => {
+    showToast('✅ 提示词已复制到剪贴板');
+  });
+}
+
+function saveStageContent() {
+  const editor = document.getElementById('stageEditor');
+  if (!editor) return;
+  stageContent['stage_' + currentStage] = editor.value;
+  localStorage.setItem('awc_stageContent', JSON.stringify(stageContent));
+  showToast('💾 内容已暂存');
+}
+
+function toggleCheck(stageIdx, key, checked) {
+  const saved = JSON.parse(localStorage.getItem('checks_' + stageIdx) || '{}');
+  saved[key] = checked;
+  localStorage.setItem('checks_' + stageIdx, JSON.stringify(saved));
+}
+
+function markStageDone() {
+  if (completedStages.has(currentStage)) {
+    completedStages.delete(currentStage);
+  } else {
+    completedStages.add(currentStage);
+  }
+  localStorage.setItem('awc_completed', JSON.stringify([...completedStages]));
+  renderSidebar();
+  renderContent();
+  if (completedStages.has(currentStage)) {
+    showToast('✅ 阶段已完成！继续加油！');
+  }
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  const labels = { author: '👤 作者模式', reviewer: '🔍 审稿人模式', devil: '😈 魔鬼代言人模式' };
+  document.getElementById('modeBadge').textContent = labels[mode];
+
+  // Update role tabs if visible
+  document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+  const tabs = document.querySelectorAll('.role-tab');
+  const idx = { author: 0, reviewer: 1, devil: 2 }[mode];
+  if (tabs[idx]) tabs[idx].classList.add('active');
+
+  localStorage.setItem('awc_mode', mode);
+}
+
+function cycleMode() {
+  const modes = ['author', 'reviewer', 'devil'];
+  const idx = modes.indexOf(currentMode);
+  setMode(modes[(idx + 1) % 3]);
+}
+
+function runRoleReview() {
+  const input = document.getElementById('roleInput')?.value || '';
+  if (!input.trim()) { showToast('请先粘贴待审阅文本'); return; }
+
+  const resultBox = document.getElementById('roleResult');
+  if (!resultBox) return;
+
+  const modePrompts = {
+    author: '作为作者，请优化以下段落的表达，使其更学术化、更流畅，同时保持个人风格：',
+    reviewer: '作为期刊审稿人，请对以下段落进行严格的专业审阅。指出：(1)逻辑问题 (2)方法不足 (3)表述模糊处 (4)改进建议。评分1-10：',
+    devil: '作为魔鬼代言人，请找出以下段落的所有潜在缺陷、逻辑漏洞和未经验证的假设。每个问题评分1-5严重程度，只有≥4的必须修改：'
+  };
+
+  const prompt = modePrompts[currentMode] + '\n\n' + input;
+  resultBox.className = 'result-box';
+  resultBox.textContent = '【提示词已生成，请复制到 Claude/ChatGPT 等 AI 工具中执行】\n\n' + prompt;
+}
+
+function runDevilAdvocate() {
+  const input = document.getElementById('roleInput')?.value || '';
+  if (!input.trim()) { showToast('请先粘贴待审阅文本'); return; }
+
+  const resultBox = document.getElementById('roleResult');
+  if (!resultBox) return;
+
+  const prompt = `你是"魔鬼代言人"审稿者。你的任务是找到以下学术写作文本中的所有潜在问题。
+
+规则：
+1. 对每个问题给出 1-5 严重程度评分
+2. 只有 ≥4 分的问题才是必须修改的
+3. 不要为了"好合作"而轻易让步
+4. 攻击强度保持在合理学术讨论范围内
+
+请逐项审查以下文本，找出：逻辑漏洞、未经验证的假设、过度推论、方法论缺陷、数据解读问题。
+
+---
+${input}`;
+
+  resultBox.className = 'result-box';
+  resultBox.textContent = '【魔鬼代言人挑战提示词】\n\n' + prompt;
+
+  // Also update the mode
+  setMode('devil');
+}
+
+function showToast(msg) {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => { toast.remove(); }, 2000);
+}
+
+// ═══════════════ RESTORE STATE ═══════════════
+
+function restoreState() {
+  const savedCompleted = JSON.parse(localStorage.getItem('awc_completed') || '[]');
+  completedStages = new Set(savedCompleted);
+  const savedContent = JSON.parse(localStorage.getItem('awc_stageContent') || '{}');
+  stageContent = savedContent;
+  const savedMode = localStorage.getItem('awc_mode') || 'author';
+  currentMode = savedMode;
+  const labels = { author: '👤 作者模式', reviewer: '🔍 审稿人模式', devil: '😈 魔鬼代言人模式' };
+  document.getElementById('modeBadge').textContent = labels[currentMode];
+}
+
+// ═══════════════ KEYBOARD SHORTCUTS ═══════════════
+
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.metaKey) {
+    if (e.key === 's') { e.preventDefault(); saveStageContent(); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); selectStage(Math.min(currentStage + 1, stages.length - 1)); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); selectStage(Math.max(currentStage - 1, 0)); }
+    if (e.key === '1') { e.preventDefault(); switchTab('prompt'); }
+    if (e.key === '2') { e.preventDefault(); switchTab('tools'); }
+    if (e.key === '3') { e.preventDefault(); switchTab('checklist'); }
+    if (e.key === '4') { e.preventDefault(); switchTab('role'); }
+  }
+});
+
+// ═══════════════ STARTUP ═══════════════
+
+restoreState();
+init();
+
+// Auto-load saved content for first stage
+(function() {
+  const editor = document.getElementById('stageEditor');
+  if (editor && stageContent['stage_0']) {
+    editor.value = stageContent['stage_0'];
+  }
+})();
+</script>
+</body>
+</html>

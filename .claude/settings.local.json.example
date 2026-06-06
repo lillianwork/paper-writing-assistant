@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install *)",
+      "Bash(python *)",
+      "Bash(node *)",
+      "Bash(npm *)",
+      "Bash(curl *)",
+      "Bash(mkdir *)",
+      "Bash(ls *)",
+      "Bash(cd *)",
+      "Bash(git *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(where *)",
+      "WebSearch",
+      "WebFetch",
+      "mcp__Claude_Preview__*",
+      "mcp__Claude_in_Chrome__*",
+      "mcp__ccd_session__*",
+      "mcp__ccd_directory__*",
+      "mcp__scheduled-tasks__*",
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Agent",
+      "TodoWrite",
+      "AskUserQuestion",
+      "Skill",
+      "CronCreate",
+      "CronList",
+      "CronDelete",
+      "ScheduleWakeup"
+    ]
+  }
+}
