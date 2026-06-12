@@ -950,7 +950,7 @@ function renderCheckCenter() {
         <div class="cc-card-header"><span class="icon">📄</span>文本粘贴区</div>
         <div class="cc-toolbar">
           <button class="cc-btn cc-btn-primary" onclick="analyzeText()">🔍 开始检测</button>
-          <button class="cc-btn cc-btn-secondary" onclick="document.getElementById('ccTextarea').value='';document.getElementById('ccResult').innerHTML='<div class=\"empty\">等待粘贴文本…</div>';document.getElementById('ccStatsRow').innerHTML=''">🗑 清空</button>
+          <button class="cc-btn cc-btn-secondary" onclick="clearCheckCenter()">🗑 清空</button>
           <span style="font-size:11px;color:var(--text3);margin-left:auto;align-self:center">支持中英文，本地分析不上传</span>
         </div>
         <textarea class="cc-textarea" id="ccTextarea" placeholder="在此粘贴论文正文（建议单章 3000-8000 字），点击「开始检测」进行重复率预估…" style="margin-top:10px"></textarea>
@@ -1055,6 +1055,20 @@ function analyzeText() {
   }
 
   document.getElementById('ccResult').innerHTML = resultHTML;
+}
+
+function clearCheckCenter() {
+  const ta = document.getElementById('ccTextarea');
+  if (ta) ta.value = '';
+  const result = document.getElementById('ccResult');
+  if (result) result.innerHTML = '<div class="empty">等待粘贴文本进行分析…</div>';
+  const stats = document.getElementById('ccStatsRow');
+  if (stats) stats.innerHTML = `
+    <div class="cc-stat"><div class="num">-</div><div class="lbl">总字符数</div></div>
+    <div class="cc-stat"><div class="num">-</div><div class="lbl">中文字数</div></div>
+    <div class="cc-stat"><div class="num">-</div><div class="lbl">段落数</div></div>
+    <div class="cc-stat"><div class="num">-</div><div class="lbl">预估重复率</div></div>
+  `;
 }
 
 // ═══════════════ KEYBOARD SHORTCUTS ═══════════════
