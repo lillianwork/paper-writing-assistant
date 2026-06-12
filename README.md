@@ -6,7 +6,7 @@
 
 | 组件 | 说明 |
 |------|------|
-| **academic-writing-hub.html** | 网页版写作工具：10 阶段管线、BRTR 提示词构建器、工具推荐、角色模拟、诚信闸门 |
+| **index.html** | 网页版写作工具：10 阶段管线、BRTR 提示词构建器、工具推荐、角色模拟、诚信闸门 |
 | **CLAUDE.md** | Claude Code 项目上下文，新会话自动加载完整工作流 |
 | **5 个 Skill** | deep-research / academic-paper / academic-paper-reviewer / academic-pipeline / academic-writing |
 | **定时任务** | 工作日 9:00 自动写作打卡提醒 |
@@ -18,7 +18,7 @@
 # Windows: 双击 start-server.bat
 # 或手动:
 python -m http.server 8765
-# 浏览器打开: http://localhost:8765/academic-writing-hub.html
+# 浏览器打开: http://localhost:8765/index.html
 ```
 
 ### 2. 配置 Claude Code
@@ -84,7 +84,7 @@ cp -r ~/academic-research-skills/academic-pipeline .claude/skills/academic-pipel
 ```
 .
 ├── CLAUDE.md                   # Claude Code 项目上下文
-├── academic-writing-hub.html   # 网页版写作工具
+├── index.html   # 网页版写作工具
 ├── start-server.bat            # Windows 一键启动
 ├── README.md
 ├── .gitignore
@@ -108,6 +108,6 @@ cp -r ~/academic-research-skills/academic-pipeline .claude/skills/academic-pipel
 
 ## 许可
 
-本项目的原创部分（academic-writing-hub.html、CLAUDE.md、academic-writing skill）采用 MIT 许可。
+本项目的原创部分（index.html、CLAUDE.md、academic-writing skill）采用 MIT 许可。
 
 ARS 技能包版权归 [Cheng-I Wu](https://github.com/Imbad0202) 所有，采用 CC-BY-NC 4.0 许可。

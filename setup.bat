@@ -32,7 +32,7 @@ if not exist ".claude\settings.local.json" (
 
 REM 3. Start preview server
 echo [3/3] 启动预览服务器...
-start http://localhost:8765/academic-writing-hub.html
+start http://localhost:8765/index.html
 python -m http.server 8765
 
 pause
