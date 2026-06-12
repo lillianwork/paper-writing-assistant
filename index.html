@@ -950,10 +950,12 @@ function renderCheckCenter() {
         <div class="cc-card-header"><span class="icon">📄</span>文本粘贴区</div>
         <div class="cc-toolbar">
           <button class="cc-btn cc-btn-primary" onclick="analyzeText()">🔍 开始检测</button>
+          <button class="cc-btn cc-btn-secondary" onclick="document.getElementById('fileInput').click()">📁 上传文档</button>
           <button class="cc-btn cc-btn-secondary" onclick="clearCheckCenter()">🗑 清空</button>
-          <span style="font-size:11px;color:var(--text3);margin-left:auto;align-self:center">支持中英文，本地分析不上传</span>
+          <span style="font-size:11px;color:var(--text3);margin-left:auto;align-self:center">粘贴或上传 .txt / .docx，本地分析不上传</span>
         </div>
-        <textarea class="cc-textarea" id="ccTextarea" placeholder="在此粘贴论文正文（建议单章 3000-30000 字），点击「开始检测」进行重复率预估…" style="margin-top:10px"></textarea>
+        <input type="file" id="fileInput" accept=".txt,.docx" style="display:none" onchange="handleFileUpload(event)">
+        <textarea class="cc-textarea" id="ccTextarea" placeholder="在此粘贴论文正文（建议单章 3000-30000 字），或点击「上传文档」选择文件…" style="margin-top:10px"></textarea>
       </div>
       <div class="cc-row">
         <div class="cc-card">
@@ -1055,6 +1057,128 @@ function analyzeText() {
   }
 
   document.getElementById('ccResult').innerHTML = resultHTML;
+}
+
+function handleFileUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  if (file.name.endsWith('.txt')) {
+    reader.onload = function(ev) {
+      document.getElementById('ccTextarea').value = ev.target.result;
+      showToast('已加载: ' + file.name + ' (' + (ev.target.result.length) + ' 字符)');
+    };
+    reader.readAsText(file, 'UTF-8');
+  } else if (file.name.endsWith('.docx')) {
+    reader.onload = function(ev) {
+      try {
+        const text = parseDocx(ev.target.result);
+        document.getElementById('ccTextarea').value = text;
+        showToast('已解析: ' + file.name + ' (' + text.length + ' 字符)');
+      } catch (err) {
+        showToast('解析失败，请确认是有效 .docx 文件，或转为 .txt 上传');
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    showToast('仅支持 .txt 和 .docx 格式');
+  }
+}
+
+async function handleFileUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  if (file.name.endsWith('.txt')) {
+    reader.onload = function(ev) {
+      document.getElementById('ccTextarea').value = ev.target.result;
+      showToast('已加载: ' + file.name + ' (' + (ev.target.result.length) + ' 字符)');
+    };
+    reader.readAsText(file, 'UTF-8');
+  } else if (file.name.endsWith('.docx')) {
+    reader.onload = async function(ev) {
+      try {
+        const text = await parseDocx(ev.target.result);
+        document.getElementById('ccTextarea').value = text;
+        showToast('已解析: ' + file.name + ' (' + text.length + ' 字符)');
+      } catch (err) {
+        showToast('解析失败: ' + (err.message || '无效的 .docx 文件'));
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    showToast('仅支持 .txt 和 .docx 格式');
+  }
+  e.target.value = '';
+}
+
+async function parseDocx(buf) {
+  const data = new Uint8Array(buf);
+  const view = new DataView(buf);
+  const readU16 = (off) => view.getUint16(off, true);
+  const readU32 = (off) => view.getUint32(off, true);
+
+  // Find EOCD record
+  let eocd = -1;
+  for (let i = data.length - 22; i >= Math.max(0, data.length - 65557); i--) {
+    if (readU32(i) === 0x06054b50) { eocd = i; break; }
+  }
+  if (eocd < 0) throw new Error('不是有效的 ZIP 文件');
+
+  // Scan central directory for word/document.xml
+  const cdOffset = readU32(eocd + 16);
+  let pos = cdOffset;
+  let xmlOffset = -1, compSize = 0, compMethod = 0;
+  while (pos < data.length - 46) {
+    if (readU32(pos) !== 0x02014b50) break;
+    const nameLen = readU16(pos + 28);
+    const name = String.fromCharCode(...data.slice(pos + 46, pos + 46 + nameLen));
+    if (name === 'word/document.xml') {
+      compMethod = readU16(pos + 10);
+      compSize = readU32(pos + 20);
+      const localOff = readU32(pos + 42);
+      const localNameLen = readU16(localOff + 26);
+      const localExtraLen = readU16(localOff + 28);
+      xmlOffset = localOff + 30 + localNameLen + localExtraLen;
+      break;
+    }
+    pos += 46 + nameLen + readU16(pos + 30) + readU16(pos + 32);
+  }
+  if (xmlOffset < 0) throw new Error('未找到 document.xml');
+
+  const raw = data.slice(xmlOffset, xmlOffset + compSize);
+
+  // Decompress with browser built-in DecompressionStream
+  let xml;
+  if (compMethod === 0) {
+    xml = new TextDecoder().decode(raw);
+  } else if (compMethod === 8) {
+    const ds = new DecompressionStream('deflate-raw');
+    const writer = ds.writable.getWriter();
+    const reader = ds.readable.getReader();
+    writer.write(raw);
+    writer.close();
+    const chunks = [];
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+    }
+    const totalLen = chunks.reduce((s, c) => s + c.length, 0);
+    const decompressed = new Uint8Array(totalLen);
+    let off = 0;
+    for (const c of chunks) { decompressed.set(c, off); off += c.length; }
+    xml = new TextDecoder().decode(decompressed);
+  } else {
+    throw new Error('不支持的压缩格式');
+  }
+
+  // Strip XML tags and decode entities
+  xml = xml.replace(/<w:t[^>]*>/g, '').replace(/<\/w:t>/g, '')
+           .replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/g, ' ')
+           .replace(/\s+/g, ' ').trim();
+  if (!xml) throw new Error('文档内容为空');
+  return xml;
 }
 
 function clearCheckCenter() {
