@@ -260,6 +260,194 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); line
   .cc-tool-grid { grid-template-columns: 1fr; }
 }
 
+/* ── LaTeX Tools Sidebar Entry ── */
+.latex-tools-entry {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  border-radius: var(--radius); cursor: pointer; transition: all .15s;
+  font-size: 13px; font-weight: 600; color: var(--text2);
+}
+.latex-tools-entry:hover { background: #ecfeff; }
+.latex-tools-entry.active { background: #ecfeff; color: #0891b2; font-weight: 700; }
+.latex-tools-dot {
+  width: 28px; height: 28px; border-radius: 50%; background: #ecfeff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.latex-tools-entry.active .latex-tools-dot { background: #0891b2; color: #fff; }
+
+/* ── LaTeX Tools Main Panel ── */
+.lt-panel { display: flex; flex-direction: column; gap: 16px; height: 100%; overflow-y: auto; }
+.lt-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.lt-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px;
+}
+.lt-card.full { grid-column: 1 / -1; }
+.lt-card-header { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.lt-card-header .icon { font-size: 18px; }
+.lt-card-desc { font-size: 12px; color: var(--text2); margin-bottom: 10px; line-height: 1.6; }
+.lt-input-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-end; flex-wrap: wrap; }
+.lt-field { display: flex; flex-direction: column; gap: 4px; }
+.lt-field label { font-size: 12px; font-weight: 600; color: var(--text2); }
+.lt-field input {
+  padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius);
+  font-size: 13px; font-family: var(--font); width: 280px;
+}
+.lt-field input:focus { outline: none; border-color: #0891b2; box-shadow: 0 0 0 3px rgba(8,145,178,.1); }
+.lt-cmd-box {
+  background: #1e1e2e; color: #cdd6f4; padding: 10px 14px; border-radius: var(--radius);
+  font-family: var(--mono); font-size: 12px; display: flex; align-items: center; gap: 8px;
+  overflow-x: auto; white-space: nowrap; margin-top: 8px;
+}
+.lt-cmd-box .cmd-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.lt-btn {
+  padding: 8px 16px; border: none; border-radius: var(--radius); cursor: pointer;
+  font-size: 13px; font-weight: 600; transition: all .15s; white-space: nowrap;
+}
+.lt-btn-primary { background: #0891b2; color: #fff; }
+.lt-btn-primary:hover { background: #0e7490; }
+.lt-btn-secondary { background: var(--surface2); color: var(--text); }
+.lt-btn-secondary:hover { background: var(--border); }
+.lt-btn-copy { background: #ecfeff; color: #0891b2; border: 1px solid #a5f3fc; padding: 6px 12px; font-size: 11px; }
+.lt-btn-copy:hover { background: #cffafe; }
+.lt-skill-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.lt-skill-card {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 14px; transition: all .15s;
+}
+.lt-skill-card:hover { border-color: #0891b2; box-shadow: var(--shadow-md); }
+.lt-skill-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.lt-skill-card p { font-size: 12px; color: var(--text2); margin-bottom: 8px; line-height: 1.5; }
+.lt-skill-card .lt-badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; margin-bottom: 6px; }
+.lt-badge.compile { background: #dcfce7; color: #15803d; }
+.lt-badge.structure { background: #fef9c3; color: #a16207; }
+.lt-badge.citation { background: #ede9fe; color: #6d28d9; }
+.lt-badge.figure { background: #fce7f3; color: #be185d; }
+.lt-checklist { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; font-size: 11px; color: var(--text2); }
+.lt-checklist-item { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.lt-checklist-item.done { color: var(--accent); }
+.lt-checklist-item.pending { color: var(--text3); }
+.lt-workflow { display: flex; align-items: center; gap: 8px; padding: 16px; flex-wrap: wrap; justify-content: center; }
+.lt-wf-step {
+  padding: 10px 16px; background: var(--surface2); border: 2px solid var(--border);
+  border-radius: var(--radius-lg); text-align: center; font-size: 12px; font-weight: 600;
+  min-width: 110px; transition: all .15s;
+}
+.lt-wf-step:hover { border-color: #0891b2; background: #ecfeff; }
+.lt-wf-arrow { font-size: 18px; color: var(--text3); }
+.lt-ref-grid { display: grid; gap: 8px; }
+.lt-ref-item {
+  padding: 10px 12px; border-left: 3px solid #0891b2;
+  background: #ecfeff; border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 12px; line-height: 1.6;
+}
+.lt-ref-item .t { font-weight: 700; color: #0e7490; }
+.lt-field-hint { font-size: 10px; color: var(--text3); margin-top: 2px; }
+@media (max-width: 900px) {
+  .lt-row { grid-template-columns: 1fr; }
+  .lt-skill-grid { grid-template-columns: 1fr; }
+  .lt-field input { width: 100%; }
+  .lt-input-row { flex-direction: column; }
+}
+
+/* ── Analysis Center (Amber Theme #d97706) ── */
+.analysis-entry {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  border-radius: var(--radius); cursor: pointer; transition: all .15s;
+  font-size: 13px; font-weight: 600; color: var(--text2);
+}
+.analysis-entry:hover { background: #fffbeb; }
+.analysis-entry.active { background: #fffbeb; color: #d97706; font-weight: 700; }
+.analysis-dot {
+  width: 28px; height: 28px; border-radius: 50%; background: #fef3c7;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.analysis-entry.active .analysis-dot { background: #d97706; color: #fff; }
+
+.an-panel { display: flex; flex-direction: column; gap: 16px; height: 100%; overflow-y: auto; }
+.an-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.an-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px;
+}
+.an-card.full { grid-column: 1 / -1; }
+.an-card-header { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.an-card-header .icon { font-size: 18px; }
+.an-card-desc { font-size: 12px; color: var(--text2); margin-bottom: 10px; line-height: 1.6; }
+
+.an-upload { border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 20px; text-align: center; cursor: pointer; transition: all .15s; }
+.an-upload:hover { border-color: #d97706; background: #fffbeb; }
+.an-upload input { display: none; }
+.an-textarea {
+  width: 100%; min-height: 200px; padding: 12px; border: 1px solid var(--border);
+  border-radius: var(--radius); font-family: var(--font); font-size: 13px; line-height: 1.8;
+  resize: vertical; background: var(--surface);
+}
+.an-textarea:focus { outline: none; border-color: #d97706; box-shadow: 0 0 0 3px rgba(217,119,6,.1); }
+
+.an-score-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+.an-score-card { text-align: center; padding: 10px 6px; background: var(--surface2); border-radius: var(--radius); }
+.an-score-card .an-score-num { font-size: 24px; font-weight: 800; color: #d97706; }
+.an-score-card .an-score-total { font-size: 36px; font-weight: 900; }
+.an-score-card .an-score-label { font-size: 10px; color: var(--text2); margin-top: 2px; }
+.an-score-bar-wrap { height: 6px; background: var(--border); border-radius: 3px; margin-top: 6px; overflow: hidden; }
+.an-score-bar-fill { height: 100%; border-radius: 3px; transition: width .3s; }
+.an-score-bar-fill.hi { background: #059669; }
+.an-score-bar-fill.md { background: #d97706; }
+.an-score-bar-fill.lo { background: #dc2626; }
+
+.an-issue-list { display: flex; flex-direction: column; gap: 6px; max-height: 400px; overflow-y: auto; }
+.an-issue {
+  padding: 10px 12px; border-radius: var(--radius); font-size: 12px;
+  border-left: 4px solid transparent; display: flex; align-items: flex-start; gap: 10px;
+  transition: all .15s; cursor: default;
+}
+.an-issue.severe { background: #fef2f2; border-left-color: #dc2626; }
+.an-issue.warn { background: #fffbeb; border-left-color: #d97706; }
+.an-issue.info { background: #f0f9ff; border-left-color: #0891b2; }
+.an-issue.pass { background: #f0fdf4; border-left-color: #059669; opacity: .7; }
+.an-issue .an-issue-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.an-issue .an-issue-body { flex: 1; min-width: 0; }
+.an-issue .an-issue-title { font-weight: 700; margin-bottom: 2px; }
+.an-issue .an-issue-detail { color: var(--text2); font-size: 11px; line-height: 1.5; }
+.an-issue .an-issue-actions { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+
+.an-btn {
+  padding: 6px 14px; border: none; border-radius: var(--radius); cursor: pointer;
+  font-size: 12px; font-weight: 600; transition: all .15s; white-space: nowrap;
+}
+.an-btn-primary { background: #d97706; color: #fff; }
+.an-btn-primary:hover { background: #b45309; }
+.an-btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.an-btn-secondary:hover { background: var(--border); }
+.an-btn-amber { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+.an-btn-amber:hover { background: #fde68a; }
+.an-btn-sm { font-size: 10px; padding: 3px 10px; }
+.an-btn-fix-done {
+  background: #dcfce7; color: #15803d; border: 1px solid #86efac;
+  cursor: default; font-size: 10px; padding: 3px 10px;
+}
+
+.an-diff-view { display: flex; flex-direction: column; gap: 4px; max-height: 300px; overflow-y: auto; font-size: 13px; line-height: 1.8; padding: 12px; background: var(--surface2); border-radius: var(--radius); }
+.an-diff-del { background: #fee2e2; color: #991b1b; text-decoration: line-through; padding: 2px 4px; border-radius: 2px; }
+.an-diff-ins { background: #dcfce7; color: #15803d; padding: 2px 4px; border-radius: 2px; }
+.an-diff-para { margin-bottom: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+
+.an-brtr-box { background: #1e1e2e; color: #cdd6f4; padding: 14px; border-radius: var(--radius); font-family: var(--mono); font-size: 12px; line-height: 1.7; white-space: pre-wrap; }
+.an-brtr-field { color: #f9d56e; font-weight: 600; }
+.an-btn-copy { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; padding: 6px 14px; font-size: 11px; }
+.an-btn-copy:hover { background: #fde68a; }
+
+.an-export-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+@media (max-width: 900px) {
+  .an-row { grid-template-columns: 1fr; }
+  .an-score-row { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   #sidebar { display: none; }
@@ -280,6 +468,14 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); line
     <div class="check-center-entry" id="checkCenterEntry" onclick="enterCheckCenter()">
       <span class="check-center-dot">🔍</span>
       <span>查重中心</span>
+    </div>
+    <div class="latex-tools-entry" id="latexToolsEntry" onclick="enterLatexTools()">
+      <span class="latex-tools-dot">📐</span>
+      <span>LaTeX 工具链</span>
+    </div>
+    <div class="analysis-entry" id="analysisEntry" onclick="enterAnalysisCenter()">
+      <span class="analysis-dot">📝</span>
+      <span>论文分析中心</span>
     </div>
     <div class="sidebar-footer">
       进度: <span id="progressPct">0%</span>
@@ -458,7 +654,381 @@ let currentMode = 'author'; // author | reviewer | devil
 let currentTab = 'prompt';
 let completedStages = new Set();
 let stageContent = {};
-let currentView = 'stage'; // 'stage' | 'checkCenter'
+let currentView = 'stage'; // 'stage' | 'checkCenter' | 'latexTools' | 'analysis'
+
+// ═══════════════ LATEX TOOLS DATA ═══════════════
+
+const latexSkills = [
+  {
+    id: 'compile',
+    name: '工具链编译检查',
+    en: 'Toolchain Compile Check',
+    icon: '🔧',
+    badge: 'compile',
+    badgeText: 'Step 1',
+    desc: '检查 LaTeX 编译环境（latexmk, TeX engine, Poppler tools），解析编译日志中的错误和警告。',
+    cmd: 'python .claude/skills/tex-toolchain-compile/scripts/check_toolchain.py --pretty --fail-on-missing',
+    cmd2: 'python .claude/skills/tex-toolchain-compile/scripts/extract_compile_issues.py --log-file __PROJECT__/build/main.log --pretty',
+    checkItems: ['latexmk 路径可访问', 'XeLaTeX / lualatex 引擎就绪', 'Poppler 工具 (pdfinfo/pdftoppm) 已安装', '编译日志无致命错误']
+  },
+  {
+    id: 'structure',
+    name: '结构解析与交叉检查',
+    en: 'Structure Parser & Cross-Refs',
+    icon: '📋',
+    badge: 'structure',
+    badgeText: 'Step 2',
+    desc: '提取章节层次、引用键、图表标签、交叉引用，检测未定义引用、未引用文献条目、未被引用的图表。',
+    cmd: 'python .claude/skills/tex-latex-structure-parser/scripts/parse_latex_structure.py --project-root __PROJECT__ --main-tex __MAIN__ --pretty',
+    checkItems: ['所有 \\cite 键在 .bib 中有定义', '所有 .bib 条目被正文引用', '所有 \\label 被 \\ref 引用', '无重复 label 定义']
+  },
+  {
+    id: 'citation',
+    name: '引用验证与修复',
+    en: 'Citation Validate & Fix',
+    icon: '📖',
+    badge: 'citation',
+    badgeText: 'Step 3',
+    desc: '本地引用完整性检查 + 远程 Crossref 验证。分类：valid / needs_correction / likely_hallucinated / not_found。',
+    cmd: 'python .claude/skills/tex-citation-validate-fix/scripts/validate_citations.py --project-root __PROJECT__ --main-tex __MAIN__ --pretty',
+    cmdRemote: 'python .claude/skills/tex-citation-validate-fix/scripts/validate_citations.py --project-root __PROJECT__ --main-tex __MAIN__ --remote --timeout 8 --pretty',
+    checkItems: ['引用键格式一致', 'DOI/标题能在 Crossref 查到', '无 AI 幻觉引用', '引用风格符合 GB/T 7714-2015']
+  },
+  {
+    id: 'figure',
+    name: '图表/章节质量修复',
+    en: 'Figure/Table/Section Fix',
+    icon: '📊',
+    badge: 'figure',
+    badgeText: 'Step 4',
+    desc: '逐目标质量检查（figures / tables / section），含 PDF 页面栅格化进行逐页视觉审查。',
+    cmd: 'python .claude/skills/tex-figure-table-section-fix/scripts/verify_content_targets.py --project-root __PROJECT__ --main-tex __MAIN__ --target figures --pretty',
+    cmd2: 'python .claude/skills/tex-figure-table-section-fix/scripts/verify_content_targets.py --project-root __PROJECT__ --main-tex __MAIN__ --target tables --pretty',
+    cmd3: 'python .claude/skills/tex-figure-table-section-fix/scripts/rasterize_pdf_pages.py --project-root __PROJECT__ --main-tex __MAIN__ --compile-if-missing --pretty',
+    checkItems: ['图表均有 label 和 caption', '表格使用 booktabs (三线表)', '图片分辨率 ≥300 DPI', '无溢出版心的图表']
+  }
+];
+
+const latexWorkflowSteps = [
+  { icon: '🔧', label: '1. 工具链检查', desc: '环境就绪' },
+  { icon: '📋', label: '2. 结构解析', desc: '交叉引用' },
+  { icon: '📖', label: '3. 引用验证', desc: '本地+远程' },
+  { icon: '📊', label: '4. 图表审查', desc: '品质修复' }
+];
+
+const latexCommonErrors = [
+  { e: 'Undefined control sequence', fix: '检查命令拼写，确认所需宏包已加载（\\usepackage{...}）' },
+  { e: 'Missing \\begin{document}', fix: '在 \\begin{document} 之前使用了输出命令，将其移到 document 环境内' },
+  { e: 'File not found', fix: '确认文件路径正确，图片/子文件在项目目录下，或安装缺失的宏包' },
+  { e: 'Citation undefined', fix: '检查 .bib 文件中 cite key 是否存在，重新运行 latexmk 完成 bibtex/biber 步骤' },
+  { e: 'Reference undefined', fix: '检查 \\label 定义是否在 \\ref 之前，需要编译两次以解析交叉引用' },
+  { e: 'Overfull/Underfull \\hbox', fix: '行内内容无法优雅断行，考虑手动调整措辞或使用 \\linebreak / \\- 断词' },
+  { e: 'Package options clash', fix: '检查是否有两个宏包以冲突选项加载，调整加载顺序或使用 \\PassOptionsToPackage' },
+  { e: 'Font shape undefined (CJK)', fix: '中文编译需使用 XeLaTeX，确认字体已安装并在系统中可用' }
+];
+
+// ═══════════════ ANALYSIS DATA ═══════════════
+
+const analysisDimensions = [
+  { id: 'structure', name: '结构完整性', weight: 0.25, maxScore: 25 },
+  { id: 'language', name: '语言精准度', weight: 0.25, maxScore: 25 },
+  { id: 'norms', name: '学术规范性', weight: 0.30, maxScore: 30 },
+  { id: 'antiAI', name: '人文差异度', weight: 0.20, maxScore: 20 }
+];
+
+const analysisRules = [
+  // ── Dimension: Structure ──
+  {
+    id: 1, dim: 'structure', severity: 'warn', autoFix: false,
+    name: '缺少研究主旨句', desc: '前两段未出现"本文/本研究/本论文"，读者无法快速定位研究目标',
+    check(text) {
+      const firstTwo = text.split(/\n\n+/).slice(0, 2).join('\n');
+      return !/[本本][文研究论文]/.test(firstTwo);
+    },
+    detail(text) {
+      const paras = text.split(/\n\n+/).filter(p => p.trim());
+      return `检测到 ${paras.length} 个段落，建议在前两段中明确写出"本文/本研究"引导的主旨句。`;
+    }
+  },
+  {
+    id: 2, dim: 'structure', severity: 'warn', autoFix: false,
+    name: '段落间过渡不足', desc: '段落间缺少转折/递进标记（然而/因此/此外/另一方面）',
+    check(text) {
+      const paras = text.split(/\n\n+/).filter(p => p.trim());
+      if (paras.length < 2) return false;
+      let missingTransitions = 0;
+      for (let i = 1; i < paras.length; i++) {
+        if (!/[然而因此此外另一方面进一步综上所以[一-鿿]{0,3}[，,]]/.test(paras[i].substring(0, 20))) {
+          missingTransitions++;
+        }
+      }
+      return missingTransitions > paras.length * 0.5;
+    },
+    detail(text) {
+      const paras = text.split(/\n\n+/).filter(p => p.trim());
+      return `${paras.length} 个段落中，${paras.length > 1 ? '多数' : ''}段落间缺少逻辑过渡标记。建议使用"然而/因此/此外/另一方面"等过渡词。`;
+    }
+  },
+  {
+    id: 3, dim: 'structure', severity: 'info', autoFix: false,
+    name: '段落长度不均衡', desc: '各段落长度标准差过大，可能影响阅读节奏',
+    check(text) {
+      const paras = text.split(/\n\n+/).filter(p => p.trim());
+      if (paras.length < 3) return false;
+      const lens = paras.map(p => p.length);
+      const mean = lens.reduce((a, b) => a + b, 0) / lens.length;
+      const variance = lens.reduce((s, l) => s + (l - mean) ** 2, 0) / lens.length;
+      return Math.sqrt(variance) > mean;
+    },
+    detail(text) {
+      const paras = text.split(/\n\n+/).filter(p => p.trim());
+      const lens = paras.map(p => p.length);
+      const min = Math.min(...lens), max = Math.max(...lens);
+      return `最短段落 ${min} 字，最长 ${max} 字。标准差大，建议均衡各段篇幅。`;
+    }
+  },
+  {
+    id: 4, dim: 'structure', severity: 'info', autoFix: false,
+    name: '缺少结论标记', desc: '最后一个段落未出现"总之/综上/因此/由此可见"等结论引导词',
+    check(text) {
+      const paras = text.split(/\n\n+/).filter(p => p.trim());
+      if (paras.length === 0) return false;
+      return !/[总之综上因此由此可见综上所述概括而言]/.test(paras[paras.length - 1]);
+    },
+    detail(text) { return '最后一段建议用"综上所述/总之/由此可见"引导总结。'; }
+  },
+  {
+    id: 5, dim: 'structure', severity: 'info', autoFix: false,
+    name: '段落首句为引用而非观点', desc: '多个段落以引用（[1]）开头而非主题句',
+    check(text) {
+      const paras = text.split(/\n\n+/).filter(p => p.trim());
+      let count = 0;
+      for (const p of paras) {
+        if (/^\s*[\[【]\d/.test(p.trim())) count++;
+      }
+      return count >= 2;
+    },
+    detail(text) {
+      const paras = text.split(/\n\n+/).filter(p => p.trim());
+      let count = 0;
+      for (const p of paras) { if (/^\s*[\[【]\d/.test(p.trim())) count++; }
+      return `${count} 个段落以引用开头，建议先提出观点再用引用佐证。`;
+    }
+  },
+
+  // ── Dimension: Language ──
+  {
+    id: 6, dim: 'language', severity: 'warn', autoFix: true,
+    name: '被动语态过多', desc: '"被"字句超过3次/500字，学术写作应适度使用主动语态',
+    check(text) {
+      const beis = (text.match(/被\S{1,4}[了过到着]?/g) || []).length;
+      return beis > text.length / 500 * 3;
+    },
+    detail(text) {
+      const beis = (text.match(/被\S{1,4}[了过到着]?/g) || []);
+      return `检测到 ${beis.length} 处被动语态：${beis.slice(0,8).join('、')}${beis.length>8?'...':''}`;
+    },
+    autoFixFn(text) {
+      return text.replace(/被(\S{1,4})([了过到着])?/g, (m, w, aux) => {
+        if (aux) return `受到${w}${aux}`;
+        return `受到${w}`;
+      });
+    },
+    fixDesc: '将"被X"改为"受到X"（注：部分场景手动调整为主动语态更佳）'
+  },
+  {
+    id: 7, dim: 'language', severity: 'info', autoFix: true,
+    name: '出现"首次提出"类表述', desc: '"首次/首创/第一次"等表述过于绝对，建议弱化',
+    check(text) {
+      return /首次提出|首创|第一次提出|率先提出/.test(text);
+    },
+    detail(text) {
+      const m = text.match(/[^。，]*?(?:首次|首创|第一次|率先)[^。，]*?[。，]/g) || [];
+      return `${m.length} 处出现绝对化表述：${m.slice(0,3).join('；')}`;
+    },
+    autoFixFn(text) {
+      return text.replace(/首次提出/g, '提出').replace(/首创/g, '开创').replace(/第一次提出/g, '较早提出').replace(/率先提出/g, '提出');
+    },
+    fixDesc: '将绝对表述替换为更审慎的措辞'
+  },
+  {
+    id: 8, dim: 'language', severity: 'warn', autoFix: true,
+    name: '冗余程度副词', desc: '"非常/十分/极其/特别/很"超过2次/500字，学术写作应精确表述',
+    check(text) {
+      const mods = (text.match(/非常|十分|极其|特别(?=\S{1,2}[的地得])|很(?=\S{1,2}[的地得])/g) || []).length;
+      return mods > text.length / 500 * 2;
+    },
+    detail(text) {
+      const mods = (text.match(/非常|十分|极其|特别(?=\S{1,2}[的地得])|很(?=\S{1,2}[的地得])/g) || []);
+      return `检测到 ${mods.length} 个冗余程度副词：${mods.slice(0,8).join('、')}${mods.length>8?'...':''}`;
+    },
+    autoFixFn(text) {
+      return text.replace(/非常/g, '').replace(/十分/g, '').replace(/极其/g, '').replace(/特别(?=\S{1,2}[的地得])/g, '').replace(/很(?=\S{1,2}[的地得])/g, '');
+    },
+    fixDesc: '删除冗余程度副词（非常/十分/极其/特别/很）'
+  },
+  {
+    id: 9, dim: 'language', severity: 'warn', autoFix: true,
+    name: '书面语冗余（进行/予以/加以/给予）', desc: '"进行+动词"可简化为动词本身',
+    check(text) {
+      return /进行\S{1,3}|予以\S{1,3}|加以\S{1,3}|给予\S{1,3}/.test(text);
+    },
+    detail(text) {
+      const m = text.match(/进行\S{1,3}|予以\S{1,3}|加以\S{1,3}|给予\S{1,3}/g) || [];
+      return `${m.length} 处书面语冗余：${m.slice(0,8).join('、')}${m.length>8?'...':''}`;
+    },
+    autoFixFn(text) {
+      return text.replace(/进行([一-鿿]{1,3})/g, '$1').replace(/予以([一-鿿]{1,3})/g, '$1').replace(/加以([一-鿿]{1,3})/g, '$1').replace(/给予([一-鿿]{1,3})/g, '$1');
+    },
+    fixDesc: '将"进行X/予以X/加以X/给予X"简化为"X"'
+  },
+  {
+    id: 10, dim: 'language', severity: 'info', autoFix: false,
+    name: '句子过长', desc: '存在超过80个汉字的句子，建议拆分',
+    check(text) {
+      const sentences = text.split(/[。！？\n]/).filter(s => s.trim());
+      const cnChars = sentences.map(s => (s.match(/[一-鿿]/g) || []).length);
+      return cnChars.some(c => c > 80);
+    },
+    detail(text) {
+      const sentences = text.split(/[。！？\n]/).filter(s => s.trim());
+      const long = sentences.filter(s => (s.match(/[一-鿿]/g) || []).length > 80);
+      return `${long.length} 个句子超过80个汉字，建议在适当位置断句。`;
+    }
+  },
+  {
+    id: 11, dim: 'language', severity: 'info', autoFix: false,
+    name: '短句重复', desc: '相同4字短语出现3次以上（每1000字），可能显得单调',
+    check(text) {
+      const gramCount = {};
+      for (let i = 0; i <= text.length - 4; i++) {
+        const gram = text.substring(i, i + 4);
+        if (/^[一-鿿]{4}$/.test(gram)) gramCount[gram] = (gramCount[gram] || 0) + 1;
+      }
+      const per1k = text.length / 1000;
+      return Object.values(gramCount).some(c => c > Math.max(3, per1k * 3));
+    },
+    detail(text) {
+      const gramCount = {};
+      for (let i = 0; i <= text.length - 4; i++) {
+        const gram = text.substring(i, i + 4);
+        if (/^[一-鿿]{4}$/.test(gram)) gramCount[gram] = (gramCount[gram] || 0) + 1;
+      }
+      const top = Object.entries(gramCount).filter(([,c]) => c >= 3).sort((a,b) => b[1]-a[1]).slice(0, 5);
+      return top.length ? `重复较多的4字格：${top.map(([g,c]) => `"${g}"(${c}次)`).join('、')}` : '';
+    }
+  },
+
+  // ── Dimension: Writing Norms ──
+  {
+    id: 12, dim: 'norms', severity: 'severe', autoFix: false,
+    name: '断言缺少引用支撑', desc: '使用"研究表/发现/证明/显示"但未附引用（[1]或(Author, Year)）',
+    check(text) {
+      const claims = text.match(/[^。！？\n]*?(?:研究表明|研究发现|调查显示|实验证明|数据表明|研究证明|结果显示)[^。！？\n]*?[。！？]/g) || [];
+      return claims.some(c => !/[\[\(（【]\d/.test(c) && !/[A-Z][a-z]+,\s*\d{4}/.test(c));
+    },
+    detail(text) {
+      const claims = text.match(/[^。！？\n]*?(?:研究表明|研究发现|调查显示|实验证明|数据表明|研究证明|结果显示)[^。！？\n]*?[。！？]/g) || [];
+      const uncited = claims.filter(c => !/[\[\(（【]\d/.test(c) && !/[A-Z][a-z]+,\s*\d{4}/.test(c));
+      return `${uncited.length} 处断言缺少引用标记。示例：${uncited.slice(0,2).join('；')}`;
+    }
+  },
+  {
+    id: 13, dim: 'norms', severity: 'info', autoFix: true,
+    name: '第一人称使用频率偏高', desc: '"我/我们/笔者"超过1次/200字，学术论文宜客观',
+    check(text) {
+      const firsts = (text.match(/我(?!们)|我们|笔者/g) || []).length;
+      return firsts > text.length / 200;
+    },
+    detail(text) {
+      const firsts = (text.match(/我(?!们)|我们|笔者/g) || []);
+      return `检测到 ${firsts.length} 处第一人称：${firsts.slice(0,8).join('、')}${firsts.length>8?'...':''}`;
+    },
+    autoFixFn(text) {
+      return text.replace(/我们/g, '本研究').replace(/我(?!们)/g, '笔者');
+    },
+    fixDesc: '将"我们"替换为"本研究"，"我"替换为"笔者"'
+  },
+  {
+    id: 14, dim: 'norms', severity: 'info', autoFix: false,
+    name: '模糊数量词', desc: '出现"很多/一些/大量/少数/大部分"但无具体数字',
+    check(text) {
+      return /很多(?!\d)|一些(?!\d)|大量(?!\d)|少数(?!\d)|大部分(?!\d)/.test(text);
+    },
+    detail(text) {
+      const m = text.match(/[^。！？\n]*?(?:很多|一些|大量|少数|大部分)[^。！？\n]*?[。！？]/g) || [];
+      return `${m.length} 处使用模糊数量词，建议用具体数据替代：${m.slice(0,2).join('；')}`;
+    }
+  },
+  {
+    id: 15, dim: 'norms', severity: 'info', autoFix: false,
+    name: '引用缺少出处页码', desc: '直接引用或数据引用未标注页码',
+    check(text) {
+      return /\[\d+\](?!\s*[pP]\w*\.?\s*\d)/.test(text) && !/\[\d+[,，]\s*p/.test(text);
+    },
+    detail(text) { return '部分引用（如[1]格式）缺少页码标注。建议：直接引用标注 [1, p.23]，间接引用可选。'; }
+  },
+
+  // ── Dimension: Anti-AI Detection ──
+  {
+    id: 16, dim: 'antiAI', severity: 'warn', autoFix: false,
+    name: '段落结构过于规整', desc: '多个段落均为3-4句完全相同长度（GPT 典型特征）',
+    check(text) {
+      const paras = text.split(/\n\n+/).filter(p => p.trim());
+      const sentenceCounts = paras.map(p => p.split(/[。！？]/).filter(s => s.trim()).length);
+      const inRange = sentenceCounts.filter(c => c >= 3 && c <= 4).length;
+      return paras.length >= 3 && inRange >= paras.length * 0.7;
+    },
+    detail(text) {
+      const paras = text.split(/\n\n+/).filter(p => p.trim());
+      const sentenceCounts = paras.map(p => p.split(/[。！？]/).filter(s => s.trim()).length);
+      const inRange = sentenceCounts.filter(c => c >= 3 && c <= 4).length;
+      return `${paras.length} 个段落中 ${inRange} 个为3-4句结构，过于规整。建议合并或拆分部分段落以增加变化。`;
+    }
+  },
+  {
+    id: 17, dim: 'antiAI', severity: 'warn', autoFix: true,
+    name: 'AI 常用过渡词频率偏高', desc: '"此外/另外/与此同时/值得注意的是"超过1次/300字',
+    check(text) {
+      const trans = (text.match(/此外|另外|与此同时|值得注意的是/g) || []).length;
+      return trans > text.length / 300;
+    },
+    detail(text) {
+      const trans = (text.match(/此外|另外|与此同时|值得注意的是/g) || []);
+      return `检测到 ${trans.length} 处 AI 常用过渡词：${trans.slice(0,6).join('、')}${trans.length>6?'...':''}`;
+    },
+    autoFixFn(text) {
+      const alts = ['除此之外', '除上述外', '同时', '需要指出的是', '应当强调的是'];
+      let i = 0;
+      return text.replace(/此外/g, () => alts[i++ % alts.length])
+        .replace(/另外/g, () => alts[i++ % alts.length])
+        .replace(/与此同时/g, '同时')
+        .replace(/值得注意的是/g, '需要指出的是');
+    },
+    fixDesc: '用变化表达替换重复的 AI 常用过渡词'
+  },
+  {
+    id: 18, dim: 'antiAI', severity: 'info', autoFix: false,
+    name: '句首模式单一', desc: '超过60%的句子以相同的3种模式开头',
+    check(text) {
+      const sentences = text.split(/[。！？\n]/).filter(s => s.trim().length >= 8);
+      if (sentences.length < 5) return false;
+      const starts = sentences.map(s => s.trim().substring(0, 2));
+      const freq = {};
+      starts.forEach(s => { freq[s] = (freq[s] || 0) + 1; });
+      const top3 = Object.values(freq).sort((a,b) => b-a).slice(0, 3).reduce((a,b) => a+b, 0);
+      return top3 / sentences.length > 0.6;
+    },
+    detail(text) {
+      const sentences = text.split(/[。！？\n]/).filter(s => s.trim().length >= 8);
+      const starts = sentences.map(s => s.trim().substring(0, 2));
+      const freq = {};
+      starts.forEach(s => { freq[s] = (freq[s] || 0) + 1; });
+      const top = Object.entries(freq).sort((a,b) => b[1]-a[1]).slice(0, 3);
+      return `最常见的3种句首：${top.map(([s,c]) => `"${s}"(${c}次)`).join('、')}，占 ${Math.round(top.reduce((a,[,c]) => a+c,0)/sentences.length*100)}%。建议变换句型。`;
+    }
+  }
+];
 
 // ═══════════════ INIT ═══════════════
 
@@ -494,6 +1064,8 @@ function selectStage(idx) {
   document.getElementById('stageTitle').textContent = `${s.icon} ${s.name}（${s.en}）`;
   document.getElementById('stageBadge').textContent = `阶段 ${idx+1}/${stages.length}`;
   document.getElementById('checkCenterEntry').classList.remove('active');
+  document.getElementById('latexToolsEntry').classList.remove('active');
+  document.getElementById('analysisEntry').classList.remove('active');
   renderSidebar();
   renderContent();
 }
@@ -937,9 +1509,807 @@ function enterCheckCenter() {
   document.getElementById('stageTitle').textContent = '🔍 查重中心（Plagiarism Check Center）';
   document.getElementById('stageBadge').textContent = '知网/维普/万方';
   document.getElementById('checkCenterEntry').classList.add('active');
+  document.getElementById('latexToolsEntry').classList.remove('active');
+  document.getElementById('analysisEntry').classList.remove('active');
   document.querySelectorAll('.stage-item').forEach(el => el.classList.remove('active'));
   renderSidebar();
   renderCheckCenter();
+}
+
+// ═══════════════ LATEX TOOLS ═══════════════
+
+function enterLatexTools() {
+  currentView = 'latexTools';
+  document.getElementById('stageTitle').textContent = '📐 LaTeX 工具链（LaTeX Toolchain）';
+  document.getElementById('stageBadge').textContent = '编译 · 结构 · 引用 · 图表';
+  document.getElementById('checkCenterEntry').classList.remove('active');
+  document.getElementById('latexToolsEntry').classList.add('active');
+  document.getElementById('analysisEntry').classList.remove('active');
+  document.querySelectorAll('.stage-item').forEach(el => el.classList.remove('active'));
+  renderSidebar();
+  renderLatexTools();
+}
+
+function renderLatexTools() {
+  const area = document.getElementById('content-area');
+  const projectPath = localStorage.getItem('awc_latexProjectPath') || '';
+  const mainTex = localStorage.getItem('awc_latexMainTex') || 'main.tex';
+
+  const skillCardsHTML = latexSkills.map(skill => {
+    let cmdsHTML = '';
+    if (skill.id === 'compile') {
+      cmdsHTML = `
+        <div class="lt-cmd-box" id="cmd-${skill.id}-1">
+          <span class="cmd-text">${escapeHtml(skill.cmd)}</span>
+          <button class="lt-btn lt-btn-copy" onclick="copyLatexCmd('cmd-${skill.id}-1')">📋 复制</button>
+        </div>
+        <div class="lt-cmd-box" id="cmd-${skill.id}-2" style="margin-top:4px;">
+          <span class="cmd-text">${escapeHtml(skill.cmd2)}</span>
+          <button class="lt-btn lt-btn-copy" onclick="copyLatexCmd('cmd-${skill.id}-2')">📋 复制</button>
+        </div>`;
+    } else if (skill.id === 'citation') {
+      cmdsHTML = `
+        <div class="lt-cmd-box" id="cmd-${skill.id}-1">
+          <span class="cmd-text">${escapeHtml(skill.cmd)}</span>
+          <button class="lt-btn lt-btn-copy" onclick="copyLatexCmd('cmd-${skill.id}-1')">📋 复制</button>
+        </div>
+        <div class="lt-cmd-box" id="cmd-${skill.id}-remote" style="margin-top:4px;">
+          <span class="cmd-text">${escapeHtml(skill.cmdRemote)}</span>
+          <button class="lt-btn lt-btn-copy" onclick="copyLatexCmd('cmd-${skill.id}-remote')">📋 复制(远程)</button>
+        </div>`;
+    } else if (skill.id === 'figure') {
+      cmdsHTML = `
+        <div class="lt-cmd-box" id="cmd-${skill.id}-1">
+          <span class="cmd-text">${escapeHtml(skill.cmd)}</span>
+          <button class="lt-btn lt-btn-copy" onclick="copyLatexCmd('cmd-${skill.id}-1')">📋 复制</button>
+        </div>
+        <div class="lt-cmd-box" id="cmd-${skill.id}-2" style="margin-top:4px;">
+          <span class="cmd-text">${escapeHtml(skill.cmd2)}</span>
+          <button class="lt-btn lt-btn-copy" onclick="copyLatexCmd('cmd-${skill.id}-2')">📋 复制</button>
+        </div>
+        <div class="lt-cmd-box" id="cmd-${skill.id}-3" style="margin-top:4px;">
+          <span class="cmd-text">${escapeHtml(skill.cmd3)}</span>
+          <button class="lt-btn lt-btn-copy" onclick="copyLatexCmd('cmd-${skill.id}-3')">📋 复制</button>
+        </div>`;
+    } else {
+      cmdsHTML = `
+        <div class="lt-cmd-box" id="cmd-${skill.id}-1">
+          <span class="cmd-text">${escapeHtml(skill.cmd)}</span>
+          <button class="lt-btn lt-btn-copy" onclick="copyLatexCmd('cmd-${skill.id}-1')">📋 复制</button>
+        </div>`;
+    }
+
+    return `
+      <div class="lt-skill-card">
+        <h4>${skill.icon} ${skill.name} <span style="font-size:10px;color:var(--text3);font-weight:400;">${skill.en}</span></h4>
+        <span class="lt-badge ${skill.badge}">${skill.badgeText}</span>
+        <p>${skill.desc}</p>
+        ${cmdsHTML}
+        <div class="lt-checklist">
+          ${skill.checkItems.map((item, i) => `
+            <div class="lt-checklist-item pending" id="lt-check-${skill.id}-${i}" onclick="toggleLatexCheck('${skill.id}', ${i})">
+              <span>⬜</span> <span>${item}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+  }).join('');
+
+  const quickRunCmd = 'bash .claude/skills/run_all_skill_checks.sh --project-root __PROJECT__ --main-tex __MAIN__';
+  const quickRunRemoteCmd = 'bash .claude/skills/run_all_skill_checks.sh --project-root __PROJECT__ --main-tex __MAIN__ --remote-citations';
+
+  area.innerHTML = `
+    <div class="lt-panel">
+
+      <!-- Project Configuration -->
+      <div class="lt-card full">
+        <div class="lt-card-header"><span class="icon">⚙️</span>项目配置</div>
+        <div class="lt-card-desc">
+          配置你的 LaTeX 论文项目路径。下方所有命令将自动填入路径。<br>
+          <strong>注意：</strong>Python 脚本无法在浏览器中运行 — 请复制命令后在终端执行。
+        </div>
+        <div class="lt-input-row">
+          <div class="lt-field">
+            <label>📁 项目根目录 (Project Root)</label>
+            <input type="text" id="ltProjectPath" value="${escapeHtml(projectPath)}"
+                   placeholder="例如: F:\\人大管科\\李良艳的大论文"
+                   onchange="saveLatexProjectPath()">
+            <span class="lt-field-hint">包含所有 .tex 和 .bib 文件的根目录</span>
+          </div>
+          <div class="lt-field">
+            <label>📄 主 TeX 文件 (Main .tex File)</label>
+            <input type="text" id="ltMainTex" value="${escapeHtml(mainTex)}"
+                   placeholder="main.tex"
+                   onchange="saveLatexProjectPath()">
+            <span class="lt-field-hint">相对于项目根目录</span>
+          </div>
+          <button class="lt-btn lt-btn-primary" onclick="updateLatexCommands()">🔄 更新命令</button>
+        </div>
+      </div>
+
+      <!-- 4 Skill Cards (2x2 grid) -->
+      <div class="lt-skill-grid" id="ltSkillGrid">
+        ${skillCardsHTML}
+      </div>
+
+      <!-- Quick-Run Card (full width) -->
+      <div class="lt-card full" style="border: 2px solid #0891b2; background: #f0fdfa;">
+        <div class="lt-card-header">
+          <span class="icon">🚀</span>一键全流程检查
+          <span style="font-size:11px;color:var(--text3);font-weight:400;margin-left:8px;">All-in-One Runner</span>
+        </div>
+        <div class="lt-card-desc">
+          按推荐顺序依次执行全部 4 个技能的检查，结果输出至 <code>.latex-checks/</code> 目录。
+          包含远程验证时添加 <code>--remote-citations</code> 参数。
+        </div>
+        <div class="lt-cmd-box" id="cmd-quickrun">
+          <span class="cmd-text">${escapeHtml(quickRunCmd)}</span>
+          <button class="lt-btn lt-btn-copy" onclick="copyLatexCmd('cmd-quickrun')">📋 复制</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="lt-btn lt-btn-copy" style="font-size:11px;"
+                  onclick="copyLatexCmdVariant('quickrun-remote')">
+            📋 复制（含远程验证）
+          </button>
+          <span style="display:none;" id="quickrun-remote-cmd">${escapeHtml(quickRunRemoteCmd)}</span>
+        </div>
+      </div>
+
+      <!-- Workflow Diagram -->
+      <div class="lt-card full">
+        <div class="lt-card-header"><span class="icon">🔄</span>推荐执行流程 (Recommended Workflow)</div>
+        <div class="lt-card-desc">按此顺序执行可确保每一步都在上一步成功的基础上进行。</div>
+        <div class="lt-workflow">
+          ${latexWorkflowSteps.map((step, i) => `
+            ${i > 0 ? '<span class="lt-wf-arrow">→</span>' : ''}
+            <div class="lt-wf-step">
+              <div style="font-size:20px;">${step.icon}</div>
+              <div>${step.label}</div>
+              <div style="font-size:10px;color:var(--text3);">${step.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Common LaTeX Errors Reference -->
+      <div class="lt-card full">
+        <div class="lt-card-header"><span class="icon">📚</span>常见 LaTeX 错误速查</div>
+        <div class="lt-ref-grid">
+          ${latexCommonErrors.map(r => `
+            <div class="lt-ref-item">
+              <span class="t">${escapeHtml(r.e)}</span>：${escapeHtml(r.fix)}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Scripts Location Reference -->
+      <div class="lt-card full" style="background:var(--surface2);">
+        <div class="lt-card-header"><span class="icon">📂</span>脚本位置说明</div>
+        <div class="lt-card-desc" style="margin-bottom:0;">
+          所有 Python 脚本位于项目的 <code>.claude/skills/</code> 目录下：
+          <ul style="padding-left:20px;margin-top:8px;line-height:2;">
+            <li><code>.claude/skills/tex-toolchain-compile/scripts/</code> — check_toolchain.py, extract_compile_issues.py</li>
+            <li><code>.claude/skills/tex-latex-structure-parser/scripts/</code> — parse_latex_structure.py</li>
+            <li><code>.claude/skills/tex-citation-validate-fix/scripts/</code> — validate_citations.py</li>
+            <li><code>.claude/skills/tex-figure-table-section-fix/scripts/</code> — verify_content_targets.py, rasterize_pdf_pages.py, review_raster_pages.py</li>
+            <li><code>.claude/skills/run_all_skill_checks.sh</code> — 一键全流程运行脚本</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  `;
+
+  restoreLatexChecks();
+  if (projectPath) updateLatexCommands();
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function saveLatexProjectPath() {
+  const projectPath = document.getElementById('ltProjectPath')?.value || '';
+  const mainTex = document.getElementById('ltMainTex')?.value || 'main.tex';
+  localStorage.setItem('awc_latexProjectPath', projectPath);
+  localStorage.setItem('awc_latexMainTex', mainTex);
+  updateLatexCommands();
+}
+
+function updateLatexCommands() {
+  const projectPath = document.getElementById('ltProjectPath')?.value || '';
+  const mainTex = document.getElementById('ltMainTex')?.value || 'main.tex';
+
+  if (!projectPath) return;
+
+  const allCmdBoxes = document.querySelectorAll('.lt-cmd-box .cmd-text');
+  allCmdBoxes.forEach(el => {
+    const original = el.getAttribute('data-original') || el.textContent;
+    if (!el.getAttribute('data-original')) el.setAttribute('data-original', original);
+    const updated = original
+      .replace(/__PROJECT__/g, projectPath)
+      .replace(/__MAIN__/g, mainTex);
+    el.textContent = updated;
+  });
+
+  const remoteEl = document.querySelector('#quickrun-remote-cmd');
+  if (remoteEl) {
+    const origRemote = remoteEl.getAttribute('data-original') || remoteEl.textContent;
+    if (!remoteEl.getAttribute('data-original')) remoteEl.setAttribute('data-original', origRemote);
+    remoteEl.textContent = origRemote
+      .replace(/__PROJECT__/g, projectPath)
+      .replace(/__MAIN__/g, mainTex);
+  }
+}
+
+function copyLatexCmd(cmdBoxId) {
+  const box = document.getElementById(cmdBoxId);
+  if (!box) return;
+  const textEl = box.querySelector('.cmd-text');
+  if (!textEl) return;
+  const text = textEl.textContent.trim();
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('✅ 命令已复制到剪贴板');
+  });
+}
+
+function copyLatexCmdVariant(variantId) {
+  const el = document.getElementById(variantId + '-cmd');
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+    showToast('✅ 命令已复制到剪贴板（含远程验证）');
+  });
+}
+
+function toggleLatexCheck(skillId, idx) {
+  const key = `lt_check_${skillId}_${idx}`;
+  const current = localStorage.getItem(key);
+  const newState = current === 'done' ? '' : 'done';
+  localStorage.setItem(key, newState);
+
+  const el = document.getElementById(`lt-check-${skillId}-${idx}`);
+  if (!el) return;
+  if (newState === 'done') {
+    el.className = 'lt-checklist-item done';
+    el.querySelector('span').textContent = '✅';
+  } else {
+    el.className = 'lt-checklist-item pending';
+    el.querySelector('span').textContent = '⬜';
+  }
+}
+
+function restoreLatexChecks() {
+  latexSkills.forEach(skill => {
+    skill.checkItems.forEach((_, i) => {
+      const key = `lt_check_${skill.id}_${i}`;
+      const state = localStorage.getItem(key);
+      if (state === 'done') {
+        const el = document.getElementById(`lt-check-${skill.id}-${i}`);
+        if (el) {
+          el.className = 'lt-checklist-item done';
+          const span = el.querySelector('span');
+          if (span) span.textContent = '✅';
+        }
+      }
+    });
+  });
+}
+
+// ═══════════════ ANALYSIS CENTER ═══════════════
+
+function enterAnalysisCenter() {
+  currentView = 'analysis';
+  document.getElementById('stageTitle').textContent = '📝 论文分析优化中心（Analysis Center）';
+  document.getElementById('stageBadge').textContent = '18 规则 · 4 维度评鉴 · 自动修复';
+  document.getElementById('checkCenterEntry').classList.remove('active');
+  document.getElementById('latexToolsEntry').classList.remove('active');
+  document.getElementById('analysisEntry').classList.add('active');
+  document.querySelectorAll('.stage-item').forEach(el => el.classList.remove('active'));
+  renderSidebar();
+  renderAnalysisCenter();
+}
+
+function renderAnalysisCenter() {
+  const area = document.getElementById('content-area');
+  const savedText = localStorage.getItem('awc_analysisText') || '';
+
+  area.innerHTML = `
+    <div class="an-panel">
+
+      <!-- Upload Row -->
+      <div class="an-card full">
+        <div class="an-card-header"><span class="icon">📝</span>论文导入</div>
+        <div class="an-upload" id="anUpload" onclick="document.getElementById('anFileInput').click()">
+          <div style="font-size:28px;margin-bottom:6px;">📄</div>
+          <div style="font-weight:600;font-size:13px;">拖拽或点击上传 .docx / .txt 文件</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px;">
+            文本在浏览器本地分析，不发送到任何服务器 · 也支持在下方文本框直接粘贴
+          </div>
+          <input type="file" id="anFileInput" accept=".txt,.docx" onchange="handleAnalysisFileUpload(event)" onclick="event.stopPropagation()">
+        </div>
+      </div>
+
+      <!-- Two-column: Editor + Scoreboard -->
+      <div class="an-row">
+        <div class="an-card">
+          <div class="an-card-header"><span class="icon">📄</span>原文（可编辑）</div>
+          <textarea class="an-textarea" id="anEditor" placeholder="在此粘贴论文正文（建议 1000-50000 字），或点击上方上传区域选择 .docx / .txt 文件..." oninput="saveAnalysisText()">${escapeHtml(savedText)}</textarea>
+        </div>
+        <div class="an-card" id="anScoreCard">
+          <div class="an-card-header"><span class="icon">📊</span>分析结果</div>
+          <div class="an-score-row" id="anScoreRow">
+            <div class="an-score-card">
+              <div class="an-score-total" style="color:var(--text3)">--</div>
+              <div class="an-score-label">综合评分</div>
+            </div>
+            <div class="an-score-card">
+              <div class="an-score-num" style="color:var(--text3)">--</div>
+              <div class="an-score-label">结构完整性</div>
+              <div class="an-score-bar-wrap"><div class="an-score-bar-fill" style="width:0%"></div></div>
+            </div>
+            <div class="an-score-card">
+              <div class="an-score-num" style="color:var(--text3)">--</div>
+              <div class="an-score-label">语言精准度</div>
+              <div class="an-score-bar-wrap"><div class="an-score-bar-fill" style="width:0%"></div></div>
+            </div>
+            <div class="an-score-card">
+              <div class="an-score-num" style="color:var(--text3)">--</div>
+              <div class="an-score-label">学术规范性</div>
+              <div class="an-score-bar-wrap"><div class="an-score-bar-fill" style="width:0%"></div></div>
+            </div>
+          </div>
+          <div id="anIssueSummary" style="font-size:12px;color:var(--text3);text-align:center;padding:20px;">
+            点击「开始分析」按钮进行自动检测
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="an-row" style="display:flex;gap:8px;align-items:center;">
+        <button class="an-btn an-btn-primary" onclick="runAnalysis()">🔍 开始分析</button>
+        <button class="an-btn an-btn-amber" onclick="applyAllFixes()">✨ 全部自动修复</button>
+        <button class="an-btn an-btn-secondary" onclick="renderDiffView()">🔄 查看对比</button>
+        <button class="an-btn an-btn-secondary" onclick="generateBRTRPrompt()">🤖 生成 BRTR 提示词</button>
+        <span style="font-size:11px;color:var(--text3);margin-left:auto;">18 规则 · 4 维度 · 全本地执行</span>
+      </div>
+
+      <!-- Issue List -->
+      <div class="an-card full" id="anIssueCard">
+        <div class="an-card-header"><span class="icon">✨</span>优化建议列表</div>
+        <div class="an-issue-list" id="anIssueList">
+          <div class="an-issue pass"><div class="an-issue-body" style="text-align:center;color:var(--text2);">等待分析…</div></div>
+        </div>
+      </div>
+
+      <!-- Diff View -->
+      <div class="an-card full" id="anDiffCard" style="display:none;">
+        <div class="an-card-header"><span class="icon">🔄</span>优化前后对比</div>
+        <div class="an-diff-view" id="anDiffView"></div>
+      </div>
+
+      <!-- BRTR Prompt -->
+      <div class="an-card full" id="anBRTRCard" style="display:none;">
+        <div class="an-card-header"><span class="icon">🤖</span>BRTR 提示词生成器</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:8px;">基于检测到的问题自动生成结构化提示词，可复制后用于 AI 工具深度优化</div>
+        <div class="an-brtr-box" id="anBRTRBox"></div>
+        <div style="margin-top:8px;">
+          <button class="an-btn an-btn-copy" onclick="copyBRTRPrompt()">📋 复制提示词</button>
+        </div>
+      </div>
+
+      <!-- Export -->
+      <div class="an-card full">
+        <div class="an-card-header"><span class="icon">📤</span>导出结果</div>
+        <div class="an-export-row">
+          <button class="an-btn an-btn-primary" onclick="exportAnalysisReport('clipboard')">📋 复制报告</button>
+          <button class="an-btn an-btn-secondary" onclick="exportAnalysisReport('txt')">📥 下载 .txt</button>
+          <button class="an-btn an-btn-secondary" onclick="exportAnalysisReport('optimized')">📝 下载优化文本</button>
+        </div>
+      </div>
+
+    </div>
+  `;
+
+  // Restore analysis results if available
+  const savedResults = localStorage.getItem('awc_analysisResults');
+  if (savedResults) {
+    try {
+      lastResults = JSON.parse(savedResults);
+      restoreAnalysisUI(lastResults);
+    } catch(e) {}
+  }
+}
+
+// ── Analysis State ──
+
+let lastResults = null; // { issues, scores, fixedText }
+
+function saveAnalysisText() {
+  const editor = document.getElementById('anEditor');
+  if (editor) localStorage.setItem('awc_analysisText', editor.value);
+}
+
+function handleAnalysisFileUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  if (file.name.endsWith('.txt')) {
+    reader.onload = function(ev) {
+      const editor = document.getElementById('anEditor');
+      if (editor) { editor.value = ev.target.result; saveAnalysisText(); }
+      showToast('已加载: ' + file.name + ' (' + ev.target.result.length + ' 字符)');
+    };
+    reader.readAsText(file, 'UTF-8');
+  } else if (file.name.endsWith('.docx')) {
+    reader.onload = async function(ev) {
+      try {
+        const text = await parseDocx(ev.target.result);
+        const editor = document.getElementById('anEditor');
+        if (editor) { editor.value = text; saveAnalysisText(); }
+        showToast('已解析: ' + file.name + ' (' + text.length + ' 字符)');
+      } catch (err) {
+        showToast('解析失败: ' + (err.message || '无效的 .docx 文件'));
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    showToast('仅支持 .txt 和 .docx 格式');
+  }
+  e.target.value = '';
+}
+
+// ── Analysis Engine ──
+
+function runAnalysis() {
+  const editor = document.getElementById('anEditor');
+  const text = (editor ? editor.value : '').trim();
+  if (!text) { showToast('请先粘贴论文文本'); return; }
+
+  let totalChars = text.length;
+  let cnChars = (text.match(/[一-鿿]/g) || []).length;
+
+  // Run all 18 rules
+  const issues = [];
+  for (const rule of analysisRules) {
+    const hit = rule.check(text);
+    const detail = rule.detail ? rule.detail(text) : '';
+    if (hit || rule.severity === 'info') {
+      issues.push({
+        ruleId: rule.id, dim: rule.dim, name: rule.name, desc: rule.desc,
+        severity: hit ? rule.severity : 'pass',
+        detail: detail,
+        autoFix: rule.autoFix, fixDesc: rule.fixDesc || '',
+        fixApplied: false
+      });
+    }
+  }
+
+  // Compute scores
+  const scores = computeScores(issues);
+
+  // Build fixed text
+  let fixedText = text;
+  const fixableIssues = issues.filter(i => i.autoFix && i.severity !== 'pass');
+  for (const issue of fixableIssues) {
+    const rule = analysisRules.find(r => r.id === issue.ruleId);
+    if (rule && rule.autoFixFn) {
+      fixedText = rule.autoFixFn(fixedText);
+    }
+  }
+
+  lastResults = { issues, scores, fixedText, stats: { totalChars, cnChars } };
+  localStorage.setItem('awc_analysisResults', JSON.stringify(lastResults));
+  restoreAnalysisUI(lastResults);
+  showToast('分析完成: ' + issues.filter(i => i.severity !== 'pass').length + ' 项发现');
+}
+
+function computeScores(issues) {
+  const dimDeductions = { structure: 0, language: 0, norms: 0, antiAI: 0 };
+  const deductMap = { severe: 5, warn: 3, info: 1, pass: 0 };
+
+  for (const issue of issues) {
+    dimDeductions[issue.dim] += deductMap[issue.severity] || 0;
+  }
+
+  const scores = {};
+  for (const dim of analysisDimensions) {
+    scores[dim.id] = Math.max(0, dim.maxScore - (dimDeductions[dim.id] || 0));
+  }
+  scores.total = Object.values(scores).reduce((a, b) => a + b, 0);
+  return scores;
+}
+
+function restoreAnalysisUI(results) {
+  const { issues, scores, stats } = results;
+
+  // Update scoreboard
+  const scoreRow = document.getElementById('anScoreRow');
+  if (scoreRow) {
+    scoreRow.innerHTML = `
+      <div class="an-score-card">
+        <div class="an-score-total" style="color:${scores.total >= 80 ? '#059669' : scores.total >= 60 ? '#d97706' : '#dc2626'}">${scores.total}</div>
+        <div class="an-score-label">综合评分 /100</div>
+      </div>
+      ${analysisDimensions.map(d => {
+        const pct = Math.round(scores[d.id] / d.maxScore * 100);
+        const cls = pct >= 80 ? 'hi' : pct >= 50 ? 'md' : 'lo';
+        return `<div class="an-score-card">
+          <div class="an-score-num" style="color:${cls === 'hi' ? '#059669' : cls === 'md' ? '#d97706' : '#dc2626'}">${scores[d.id]}/${d.maxScore}</div>
+          <div class="an-score-label">${d.name}</div>
+          <div class="an-score-bar-wrap"><div class="an-score-bar-fill ${cls}" style="width:${pct}%"></div></div>
+        </div>`;
+      }).join('')}
+    `;
+  }
+
+  // Update issue summary
+  const severeCount = issues.filter(i => i.severity === 'severe').length;
+  const warnCount = issues.filter(i => i.severity === 'warn').length;
+  const infoCount = issues.filter(i => i.severity === 'info').length;
+  const passCount = issues.filter(i => i.severity === 'pass').length;
+
+  const summary = document.getElementById('anIssueSummary');
+  if (summary) {
+    summary.innerHTML = `🔴 严重 ${severeCount} · 🟡 警告 ${warnCount} · 📘 建议 ${infoCount} · ✅ 通过 ${passCount} · 总字符 ${stats.totalChars} · 中文字数 ${stats.cnChars}`;
+  }
+
+  // Update issue list
+  const issueList = document.getElementById('anIssueList');
+  if (issueList) {
+    issueList.innerHTML = issues.map((issue, idx) => {
+      const sevIcon = issue.severity === 'severe' ? '🔴' : issue.severity === 'warn' ? '🟡' : issue.severity === 'info' ? '📘' : '✅';
+      return `<div class="an-issue ${issue.severity}">
+        <div class="an-issue-icon">${sevIcon}</div>
+        <div class="an-issue-body">
+          <div class="an-issue-title">规则${issue.ruleId}: ${issue.name} <span style="font-weight:400;font-size:10px;color:var(--text3);">[${analysisDimensions.find(d=>d.id===issue.dim)?.name||issue.dim}]</span></div>
+          <div class="an-issue-detail">${issue.severity === 'pass' ? '✅ 未检测到问题' : escapeHtml(issue.detail)}</div>
+          ${issue.severity !== 'pass' ? `<div style="font-size:11px;color:var(--text2);margin-top:2px;">💡 ${escapeHtml(issue.desc)}</div>` : ''}
+          <div class="an-issue-actions">
+            ${issue.autoFix && issue.severity !== 'pass' ? `
+              <button class="an-btn an-btn-amber an-btn-sm" id="anFixBtn-${issue.ruleId}" onclick="applySingleFix(${issue.ruleId})">✨ 自动修复</button>
+              <span style="font-size:10px;color:var(--text3);align-self:center;">${escapeHtml(issue.fixDesc)}</span>
+            ` : (issue.severity !== 'pass' ? `<span style="font-size:10px;color:var(--text3);">需手动修改</span>` : '')}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ── Auto-Fix Engine ──
+
+function applySingleFix(ruleId) {
+  if (!lastResults) { showToast('请先运行分析'); return; }
+
+  const rule = analysisRules.find(r => r.id === ruleId);
+  if (!rule || !rule.autoFixFn) { showToast('此规则暂不支持自动修复'); return; }
+
+  const editor = document.getElementById('anEditor');
+  const originalText = editor.value;
+  const fixedText = rule.autoFixFn(originalText);
+
+  if (fixedText === originalText) {
+    showToast('未找到可修复的匹配项');
+    return;
+  }
+
+  editor.value = fixedText;
+  saveAnalysisText();
+
+  const issue = lastResults.issues.find(i => i.ruleId === ruleId);
+  if (issue) issue.fixApplied = true;
+  lastResults.fixedText = fixedText;
+
+  // Update button state
+  const btn = document.getElementById('anFixBtn-' + ruleId);
+  if (btn) {
+    btn.className = 'an-btn an-btn-fix-done';
+    btn.textContent = '✅ 已修复';
+    btn.onclick = null;
+  }
+
+  // Show diff
+  const diffCard = document.getElementById('anDiffCard');
+  if (diffCard) diffCard.style.display = '';
+  const diffView = document.getElementById('anDiffView');
+  if (diffView) diffView.innerHTML = buildInlineDiff(originalText, fixedText);
+
+  localStorage.setItem('awc_analysisResults', JSON.stringify(lastResults));
+  showToast('已修复: ' + rule.name);
+}
+
+function applyAllFixes() {
+  if (!lastResults) { showToast('请先运行分析'); return; }
+
+  const editor = document.getElementById('anEditor');
+  const originalText = editor.value;
+  const originalForDiff = originalText;
+  let fixedText = originalText;
+  let fixCount = 0;
+
+  for (const rule of analysisRules) {
+    if (!rule.autoFixFn) continue;
+    const newText = rule.autoFixFn(fixedText);
+    if (newText !== fixedText) {
+      fixedText = newText;
+      fixCount++;
+      const issue = lastResults.issues.find(i => i.ruleId === rule.id);
+      if (issue) issue.fixApplied = true;
+    }
+  }
+
+  if (fixCount === 0) { showToast('无可自动修复的问题'); return; }
+
+  editor.value = fixedText;
+  saveAnalysisText();
+  lastResults.fixedText = fixedText;
+  localStorage.setItem('awc_analysisResults', JSON.stringify(lastResults));
+
+  // Refresh issue buttons
+  restoreAnalysisUI(lastResults);
+
+  // Show diff
+  const diffCard = document.getElementById('anDiffCard');
+  if (diffCard) diffCard.style.display = '';
+  const diffView = document.getElementById('anDiffView');
+  if (diffView) diffView.innerHTML = buildInlineDiff(originalForDiff, fixedText);
+
+  showToast('已自动修复 ' + fixCount + ' 项问题');
+}
+
+// ── Diff View ──
+
+function renderDiffView() {
+  if (!lastResults) { showToast('请先运行分析'); return; }
+  const editor = document.getElementById('anEditor');
+  const currentText = editor ? editor.value : '';
+  const originalText = lastResults.fixedText ? currentText : currentText;
+
+  // Re-run fixes to get diff baseline
+  let fixedText = currentText;
+  for (const rule of analysisRules) {
+    if (rule.autoFixFn) { fixedText = rule.autoFixFn(fixedText); }
+  }
+
+  const diffCard = document.getElementById('anDiffCard');
+  if (diffCard) diffCard.style.display = '';
+  const diffView = document.getElementById('anDiffView');
+  if (diffView) {
+    diffView.innerHTML = buildInlineDiff(currentText, fixedText);
+  }
+}
+
+function buildInlineDiff(original, fixed) {
+  if (original === fixed) return '<div style="color:var(--text3);text-align:center;padding:12px;">原始文本与修复后一致，无需对比</div>';
+
+  // Simple sentence-level diff
+  const origSentences = original.split(/(?<=[。！？\n])/);
+  const fixedSentences = fixed.split(/(?<=[。！？\n])/);
+
+  let result = '';
+  const maxLen = Math.max(origSentences.length, fixedSentences.length);
+
+  for (let i = 0; i < maxLen; i++) {
+    const o = origSentences[i] || '';
+    const f = fixedSentences[i] || '';
+    if (o === f) {
+      result += `<span>${escapeHtml(o)}</span>`;
+    } else {
+      if (o) result += `<span class="an-diff-del">${escapeHtml(o)}</span>`;
+      if (f) result += `<span class="an-diff-ins">${escapeHtml(f)}</span>`;
+    }
+  }
+  return result;
+}
+
+// ── BRTR Prompt Generator ──
+
+function generateBRTRPrompt() {
+  if (!lastResults) { showToast('请先运行分析'); return; }
+  const editor = document.getElementById('anEditor');
+  const text = (editor ? editor.value : '').trim();
+  if (!text) { showToast('请先粘贴论文文本'); return; }
+
+  const { issues, scores } = lastResults;
+  const activeIssues = issues.filter(i => i.severity !== 'pass');
+
+  // Determine suggested role
+  let role = '资深学术审稿人';
+  const severeDims = new Set(activeIssues.filter(i => i.severity === 'severe').map(i => i.dim));
+  if (severeDims.has('norms')) role = '学术规范专家';
+  if (severeDims.has('language')) role = '学术语言润色师';
+  if (activeIssues.filter(i => i.dim === 'structure').length >= 3) role = '论文结构优化专家';
+
+  const prompt = `【BRTR 结构化优化提示词】
+
+🔵 **Background（背景）**
+本文为一篇管理科学与工程领域的学术论文（共 ${text.length} 字符，综合评分 ${scores.total}/100）。
+经 18 项规则自动检测，发现 ${activeIssues.length} 处待优化问题：
+${activeIssues.map(i => `  - [${i.severity === 'severe' ? '严重' : i.severity === 'warn' ? '警告' : '建议'}] ${i.name}: ${i.detail}`).join('\n')}
+
+🔵 **Role（角色）**
+请以「${role}」的视角审视本文，重点关注学术规范、逻辑严谨性和语言精准度。
+
+🔵 **Task（任务）**
+${activeIssues.filter(i => i.severity === 'severe').map((i, idx) => `${idx+1}. 重点修复「${i.name}」: ${i.desc}`).join('\n') || '无严重问题，重点优化以下方面：'}
+${activeIssues.filter(i => i.severity !== 'severe').slice(0, 5).map((i, idx) => `${idx + (activeIssues.filter(j => j.severity === 'severe').length) + 1}. 优化「${i.name}」: ${i.desc}`).join('\n')}
+
+🔵 **Request（输出要求）**
+1. 输出优化后的完整文本，用【】标注每一处修改
+2. 每处修改附一句话说明修改原因
+3. 保持原文的学术风格和核心论点不变
+4. 优先处理严重问题和警告级别问题`;
+
+  const brtrCard = document.getElementById('anBRTRCard');
+  if (brtrCard) brtrCard.style.display = '';
+  const brtrBox = document.getElementById('anBRTRBox');
+  if (brtrBox) brtrBox.textContent = prompt;
+
+  lastResults._brtrPrompt = prompt;
+}
+
+function copyBRTRPrompt() {
+  if (!lastResults || !lastResults._brtrPrompt) { showToast('请先生成 BRTR 提示词'); return; }
+  navigator.clipboard.writeText(lastResults._brtrPrompt).then(() => {
+    showToast('✅ BRTR 提示词已复制到剪贴板');
+  }).catch(() => showToast('复制失败，请手动复制'));
+}
+
+// ── Export ──
+
+function exportAnalysisReport(format) {
+  if (!lastResults) { showToast('请先运行分析'); return; }
+
+  const { issues, scores, stats } = lastResults;
+  const activeIssues = issues.filter(i => i.severity !== 'pass');
+
+  const reportText = `论文分析优化报告
+==============================
+生成时间: ${new Date().toLocaleString()}
+文本统计: ${stats.totalChars} 总字符，${stats.cnChars} 中文字数
+
+综合评分: ${scores.total}/100
+  结构完整性: ${scores.structure}/25
+  语言精准度: ${scores.language}/25
+  学术规范性: ${scores.norms}/30
+  人文差异度: ${scores.antiAI}/20
+
+检测结果: 严重 ${activeIssues.filter(i=>i.severity==='severe').length} · 警告 ${activeIssues.filter(i=>i.severity==='warn').length} · 建议 ${activeIssues.filter(i=>i.severity==='info').length}
+
+逐项详情:
+${activeIssues.map(i => `  [${i.severity === 'severe' ? '严重' : i.severity === 'warn' ? '警告' : '建议'}] 规则${i.ruleId}: ${i.name}
+  详情: ${i.detail}
+  建议: ${i.desc}
+  ${i.fixApplied ? '  ✅ 已自动修复' : (i.autoFix ? '  ⚡ 可自动修复' : '  ✋ 需手动修改')}
+`).join('\n')}`;
+
+  const editor = document.getElementById('anEditor');
+  const optimizedText = editor ? editor.value : '';
+
+  if (format === 'clipboard') {
+    navigator.clipboard.writeText(reportText).then(() => {
+      showToast('✅ 报告已复制到剪贴板');
+    }).catch(() => showToast('复制失败'));
+  } else if (format === 'txt') {
+    const blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = '论文分析报告_' + new Date().toISOString().slice(0,10) + '.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('📥 报告已下载');
+  } else if (format === 'optimized') {
+    const blob = new Blob([optimizedText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = '优化后论文_' + new Date().toISOString().slice(0,10) + '.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('📝 优化文本已下载');
+  }
 }
 
 function renderCheckCenter() {
@@ -1207,6 +2577,8 @@ document.addEventListener('keydown', (e) => {
     if (e.key === '3') { e.preventDefault(); switchTab('checklist'); }
     if (e.key === '4') { e.preventDefault(); switchTab('role'); }
     if (e.key === 'Escape' && currentView === 'checkCenter') { e.preventDefault(); selectStage(8); }
+    if (e.key === 'Escape' && currentView === 'latexTools') { e.preventDefault(); selectStage(9); }
+    if (e.key === 'Escape' && currentView === 'analysis') { e.preventDefault(); selectStage(9); }
   }
 });
 
