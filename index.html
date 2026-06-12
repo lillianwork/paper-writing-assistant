@@ -180,6 +180,86 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); line
 }
 @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+/* ── Check Center Sidebar Entry ── */
+.check-center-entry {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+  border-top: 1px solid var(--border); margin-top: 8px;
+  border-radius: var(--radius); cursor: pointer; transition: all .15s;
+  font-size: 13px; font-weight: 600; color: var(--text2);
+}
+.check-center-entry:hover { background: #ffe4e6; }
+.check-center-entry.active { background: #ffe4e6; color: #e11d48; font-weight: 700; }
+.check-center-dot {
+  width: 28px; height: 28px; border-radius: 50%; background: #ffe4e6;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.check-center-entry.active .check-center-dot { background: #e11d48; color: #fff; }
+
+/* ── Check Center Main Panel ── */
+.check-center { display: flex; flex-direction: column; gap: 16px; height: 100%; overflow-y: auto; }
+.cc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.cc-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px;
+}
+.cc-card.full { grid-column: 1 / -1; }
+.cc-card-header { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.cc-card-header .icon { font-size: 18px; }
+.cc-textarea {
+  width: 100%; height: 220px; border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 12px; font-family: var(--font); font-size: 13px; line-height: 1.8;
+  resize: vertical; background: var(--surface2);
+}
+.cc-textarea:focus { outline: none; border-color: #e11d48; background: #fff; }
+.cc-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+}
+.cc-stat {
+  text-align: center; padding: 12px 8px; background: var(--surface2);
+  border-radius: var(--radius);
+}
+.cc-stat .num { font-size: 22px; font-weight: 700; color: #e11d48; }
+.cc-stat .lbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.cc-result {
+  max-height: 300px; overflow-y: auto; font-size: 13px; line-height: 1.8;
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 12px;
+  background: #fff;
+}
+.cc-result mark {
+  background: #fecaca; padding: 1px 3px; border-radius: 2px; color: #991b1b;
+}
+.cc-tool-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.cc-tool-item {
+  display: flex; align-items: center; gap: 8px; padding: 10px 12px;
+  background: var(--surface2); border-radius: var(--radius); cursor: pointer;
+  transition: all .15s; font-size: 13px; font-weight: 500;
+}
+.cc-tool-item:hover { background: #ffe4e6; }
+.cc-tool-item .t-name { flex: 1; }
+.cc-tool-item .t-url { font-size: 11px; color: var(--text3); }
+.cc-tip-grid { display: grid; gap: 8px; }
+.cc-tip {
+  padding: 10px 12px; border-left: 3px solid #e11d48;
+  background: #fff1f2; border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 12px; line-height: 1.6;
+}
+.cc-tip .t { font-weight: 700; color: #be123c; }
+.cc-toolbar { display: flex; gap: 8px; }
+.cc-btn {
+  padding: 8px 16px; border: none; border-radius: var(--radius); cursor: pointer;
+  font-size: 13px; font-weight: 600; transition: all .15s;
+}
+.cc-btn-primary { background: #e11d48; color: #fff; }
+.cc-btn-primary:hover { background: #be123c; }
+.cc-btn-secondary { background: var(--surface2); color: var(--text); }
+.cc-btn-secondary:hover { background: var(--border); }
+@media (max-width: 900px) {
+  .cc-row { grid-template-columns: 1fr; }
+  .cc-stats { grid-template-columns: repeat(2, 1fr); }
+  .cc-tool-grid { grid-template-columns: 1fr; }
+}
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   #sidebar { display: none; }
@@ -197,6 +277,10 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); line
       <div class="sub">Academic Writing Command Center</div>
     </div>
     <div class="stage-list" id="stageList"></div>
+    <div class="check-center-entry" id="checkCenterEntry" onclick="enterCheckCenter()">
+      <span class="check-center-dot">🔍</span>
+      <span>查重中心</span>
+    </div>
     <div class="sidebar-footer">
       进度: <span id="progressPct">0%</span>
       <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
@@ -278,7 +362,10 @@ const toolsByStage = {
     { name:'Quillbot', url:'quillbot.com', desc:'多版本改写，语义保持' }
   ],
   8: [
-    { name:'Grammarly Premium', url:'grammarly.com', desc:'语法纠错>95%准确率' },
+    { name:'知网个人查重', url:'https://cx.cnki.net/', desc:'官方个人查重服务，按篇付费' },
+    { name:'维普论文检测', url:'https://vpcs.cqvip.com/', desc:'维普期刊查重，个人可购买' },
+    { name:'万方检测', url:'https://check.wanfangdata.com.cn/', desc:'万方数据查重服务' },
+    { name:'PaperPass', url:'https://www.paperpass.com/', desc:'在线查重，性价比高' },
     { name:'DeepL Write', url:'deepl.com/write', desc:'学术风格改写与润色' },
     { name:'GPTZero', url:'gptzero.me', desc:'AI生成内容检测' },
     { name:'Wordtune', url:'wordtune.com', desc:'语调与风格调整' }
@@ -348,11 +435,30 @@ const qualityGates = [
   { id:'framework_lock', name:'框架锁定', desc:'AI是否过度引导你使用了某种主流但未必合适的理论框架？', level:'warn' }
 ];
 
+const checkCenterTools = [
+  { name:'中国知网 (CNKI)', url:'https://check.cnki.net/', desc:'官方学术不端检测，需机构账号' },
+  { name:'维普论文检测', url:'https://vpcs.cqvip.com/', desc:'维普期刊查重，个人可购买' },
+  { name:'万方检测', url:'https://check.wanfangdata.com.cn/', desc:'万方数据查重服务' },
+  { name:'PaperPass', url:'https://www.paperpass.com/', desc:'在线查重，支持中英文' },
+  { name:'大雅相似度分析', url:'https://www.dayainfo.com/', desc:'超星旗下，支持多语种查重' },
+  { name:'Turnitin', url:'https://www.turnitin.com/', desc:'国际通用英文论文查重' }
+];
+
+const deplagTips = [
+  { t:'同义词替换', d:'将高频词替换为学术同义词，但保持专业术语不变。例："显著提升"→"明显提高"、"结果表明"→"数据分析显示"' },
+  { t:'句式重组', d:'被动语态↔主动语态切换、长句拆分为短句、调整从句顺序。避免仅改动词序。' },
+  { t:'引文规范', d:'直接引用加双引号+标注出处，间接引用用自己的话转述+标注来源。知网查重会排除正确标注的引文。' },
+  { t:'数据图表化', d:'将大段描述性数据转为表格或图表形式，可有效降低文字重复率。' },
+  { t:'删除冗余修饰', d:'去掉不必要的副词和形容词堆砌，使表达更简洁，同时减少重复风险。' },
+  { t:'合并相似段落', d:'将分散讨论同一主题的多个段落整合为一段综合论述，减少交叉重复。' }
+];
+
 let currentStage = 0;
 let currentMode = 'author'; // author | reviewer | devil
 let currentTab = 'prompt';
 let completedStages = new Set();
 let stageContent = {};
+let currentView = 'stage'; // 'stage' | 'checkCenter'
 
 // ═══════════════ INIT ═══════════════
 
@@ -382,10 +488,12 @@ function updateProgress() {
 }
 
 function selectStage(idx) {
+  currentView = 'stage';
   currentStage = idx;
   const s = stages[idx];
   document.getElementById('stageTitle').textContent = `${s.icon} ${s.name}（${s.en}）`;
   document.getElementById('stageBadge').textContent = `阶段 ${idx+1}/${stages.length}`;
+  document.getElementById('checkCenterEntry').classList.remove('active');
   renderSidebar();
   renderContent();
 }
@@ -822,17 +930,145 @@ function restoreState() {
   document.getElementById('modeBadge').textContent = labels[currentMode];
 }
 
+// ═══════════════ CHECK CENTER ═══════════════
+
+function enterCheckCenter() {
+  currentView = 'checkCenter';
+  document.getElementById('stageTitle').textContent = '🔍 查重中心（Plagiarism Check Center）';
+  document.getElementById('stageBadge').textContent = '知网/维普/万方';
+  document.getElementById('checkCenterEntry').classList.add('active');
+  document.querySelectorAll('.stage-item').forEach(el => el.classList.remove('active'));
+  renderSidebar();
+  renderCheckCenter();
+}
+
+function renderCheckCenter() {
+  const area = document.getElementById('content-area');
+  area.innerHTML = `
+    <div class="check-center">
+      <div class="cc-card full">
+        <div class="cc-card-header"><span class="icon">📄</span>文本粘贴区</div>
+        <div class="cc-toolbar">
+          <button class="cc-btn cc-btn-primary" onclick="analyzeText()">🔍 开始检测</button>
+          <button class="cc-btn cc-btn-secondary" onclick="document.getElementById('ccTextarea').value='';document.getElementById('ccResult').innerHTML='<div class=\"empty\">等待粘贴文本…</div>';document.getElementById('ccStatsRow').innerHTML=''">🗑 清空</button>
+          <span style="font-size:11px;color:var(--text3);margin-left:auto;align-self:center">支持中英文，本地分析不上传</span>
+        </div>
+        <textarea class="cc-textarea" id="ccTextarea" placeholder="在此粘贴论文正文（建议单章 3000-8000 字），点击「开始检测」进行重复率预估…" style="margin-top:10px"></textarea>
+      </div>
+      <div class="cc-row">
+        <div class="cc-card">
+          <div class="cc-card-header"><span class="icon">📊</span>统计概览</div>
+          <div class="cc-stats" id="ccStatsRow">
+            <div class="cc-stat"><div class="num">-</div><div class="lbl">总字符数</div></div>
+            <div class="cc-stat"><div class="num">-</div><div class="lbl">中文字数</div></div>
+            <div class="cc-stat"><div class="num">-</div><div class="lbl">段落数</div></div>
+            <div class="cc-stat"><div class="num">-</div><div class="lbl">预估重复率</div></div>
+          </div>
+        </div>
+        <div class="cc-card">
+          <div class="cc-card-header"><span class="icon">🧰</span>查重工具入口</div>
+          <div class="cc-tool-grid">
+            ${checkCenterTools.map(t => `
+              <div class="cc-tool-item" onclick="window.open('${t.url}', '_blank')" title="${t.desc}">
+                <span class="t-name">${t.name}</span>
+                <span class="t-url">${t.url}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="cc-row">
+        <div class="cc-card">
+          <div class="cc-card-header"><span class="icon">🔍</span>重复检测结果</div>
+          <div class="cc-result" id="ccResult"><div class="empty">等待粘贴文本进行分析…</div></div>
+        </div>
+        <div class="cc-card">
+          <div class="cc-card-header"><span class="icon">💡</span>降重技巧</div>
+          <div class="cc-tip-grid">
+            ${deplagTips.map(t => `
+              <div class="cc-tip"><span class="t">${t.t}</span>：${t.d}</div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function analyzeText() {
+  const text = document.getElementById('ccTextarea').value.trim();
+  if (!text) { showToast('请先粘贴论文文本'); return; }
+
+  const totalChars = text.length;
+  const charsNoSpace = text.replace(/\s/g, '').length;
+  const cnChars = (text.match(/[一-鿿]/g) || []).length;
+  const paragraphs = text.split(/\n+/).filter(p => p.trim()).length;
+  const words = text.split(/\s+/).filter(w => w.length > 0).length;
+  const totalWords = cnChars + words;
+
+  const phrases = [];
+  for (let n = 6; n >= 4; n--) {
+    for (let i = 0; i <= text.length - n; i++) {
+      const gram = text.substring(i, i + n);
+      if (/[一-鿿]/.test(gram) && !/[，。；：、！？\n\r]/.test(gram)) {
+        phrases.push(gram);
+      }
+    }
+  }
+
+  const freq = {};
+  phrases.forEach(p => { freq[p] = (freq[p] || 0) + 1; });
+  const repeats = Object.entries(freq).filter(([k, v]) => v > 1).sort((a, b) => b[1] - a[1]).slice(0, 30);
+
+  const totalPhrases = phrases.length || 1;
+  const repeatedPhrases = repeats.reduce((sum, [, v]) => sum + v, 0);
+  const estRate = Math.min(Math.round((repeatedPhrases / totalPhrases) * 100 * 1.8), 98);
+
+  let level = '✅ 低风险';
+  let levelColor = '#059669';
+  if (estRate > 30) { level = '🔴 高风险'; levelColor = '#dc2626'; }
+  else if (estRate > 15) { level = '🟡 中风险'; levelColor = '#d97706'; }
+
+  document.getElementById('ccStatsRow').innerHTML = `
+    <div class="cc-stat"><div class="num">${totalChars}</div><div class="lbl">总字符数</div></div>
+    <div class="cc-stat"><div class="num">${cnChars}</div><div class="lbl">中文字数</div></div>
+    <div class="cc-stat"><div class="num">${paragraphs}</div><div class="lbl">段落数</div></div>
+    <div class="cc-stat"><div class="num" style="color:${levelColor}">${estRate}%</div><div class="lbl">${level}</div></div>
+  `;
+
+  let resultHTML = '';
+  if (repeats.length === 0) {
+    resultHTML = '<div style="color:#059669;font-weight:600">未检测到显著重复段落，文本原创度较高。</div>';
+  } else {
+    resultHTML = '<div style="margin-bottom:8px;font-weight:600">检测到以下高频重复短句（按出现次数排列）：</div>';
+    repeats.forEach(([phrase, count], idx) => {
+      resultHTML += `<div style="margin-bottom:4px;display:flex;gap:8px;align-items:flex-start">
+        <span style="color:#e11d48;font-weight:700;min-width:28px">${count}×</span>
+        <span>"<mark>${phrase}</mark>"</span>
+        <span style="color:var(--text3);font-size:11px;white-space:nowrap">${phrase.length}字</span>
+      </div>`;
+    });
+    resultHTML += `<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-size:12px;color:var(--text2)">
+      ⚠️ 此为简易 n-gram 重复预估，结果仅供参考。正式查重请使用知网/维普/万方等官方平台。
+      <br>📌 预估重复率 = ${estRate}% ｜ 检测到 ${repeats.length} 组重复短句（${repeatedPhrases} 处重复）
+    </div>`;
+  }
+
+  document.getElementById('ccResult').innerHTML = resultHTML;
+}
+
 // ═══════════════ KEYBOARD SHORTCUTS ═══════════════
 
 document.addEventListener('keydown', (e) => {
   if (e.ctrlKey || e.metaKey) {
     if (e.key === 's') { e.preventDefault(); saveStageContent(); }
-    if (e.key === 'ArrowRight') { e.preventDefault(); selectStage(Math.min(currentStage + 1, stages.length - 1)); }
-    if (e.key === 'ArrowLeft') { e.preventDefault(); selectStage(Math.max(currentStage - 1, 0)); }
+    if (e.key === 'ArrowRight' && currentView === 'stage') { e.preventDefault(); selectStage(Math.min(currentStage + 1, stages.length - 1)); }
+    if (e.key === 'ArrowLeft' && currentView === 'stage') { e.preventDefault(); selectStage(Math.max(currentStage - 1, 0)); }
     if (e.key === '1') { e.preventDefault(); switchTab('prompt'); }
     if (e.key === '2') { e.preventDefault(); switchTab('tools'); }
     if (e.key === '3') { e.preventDefault(); switchTab('checklist'); }
     if (e.key === '4') { e.preventDefault(); switchTab('role'); }
+    if (e.key === 'Escape' && currentView === 'checkCenter') { e.preventDefault(); selectStage(8); }
   }
 });
 
